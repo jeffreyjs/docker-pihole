@@ -1,6 +1,6 @@
 # docker-pihole
 
-This is a `docker compose` setup for running pihole and traefik with self-signed certificates from `cfssl`
+This is a `docker compose` setup for running pihole and traefik with self-signed certificates from `cfssl` and `cloudflared` for DNS over HTTPS (DoH). This is a work in progress, and not all services are complete. Mainly `cfssl` and the self-signed certificates, and the local development setup with `molecule` or the `ansible` playbook.
 
 ## Usage
 
