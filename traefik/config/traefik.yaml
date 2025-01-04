@@ -1,9 +1,11 @@
 api:
   dashboard: false
+core:
+  defaultRuleSyntax: v3
 entryPoints:
-  dns_tcp:
+  dns-tcp:
     address: :53/tcp
-  dns_udp:
+  dns-udp:
     address: :53/udp
   web:
     address: :80
@@ -23,12 +25,12 @@ ping: {}
 providers:
   providersThrottleDuration: 2s
   docker:
-    watch: true
-    network: compose_docker
     defaultRule:
       "Host(`{{ index .Labels \"com.docker.compose.service\"}}\
       .{{ env \"DOMAIN\" }}`)"
-    swarmModeRefreshSeconds: 15s
+    endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
+    network: compose_docker
+    watch: true
 serversTransport:
   insecureSkipVerify: true
