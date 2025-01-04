@@ -30,7 +30,7 @@ providers:
       .{{ env \"DOMAIN\" }}`)"
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: compose_docker
+    network: dns
     watch: true
 serversTransport:
   insecureSkipVerify: true

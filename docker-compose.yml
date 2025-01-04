@@ -4,10 +4,11 @@ x-common: &common-settings
     options:
       max-size: 100m
       max-file: "3"
-  networks:
-    - dns
   platform: linux/amd64
   restart: unless-stopped
+x-network: &default-networks
+  networks:
+    - dns 
 networks:
   dns:
     name: dns
@@ -52,14 +53,8 @@ services:
     image: cloudflare/cloudflared:${TAG_CLOUDFLARED:-latest}
     networks:
       dns:
-        ipv4_address: 172.20.0.250
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: "3"
-    platform: linux/amd64
-    restart: unless-stopped
+        ipv4_address: 172.20.0.250 
+    <<: *common-settings
   pihole:
     container_name: pihole
     dns:
@@ -92,7 +87,7 @@ services:
       - "traefik.udp.routers.pihole-udp.entrypoints=dns-udp"
       - "traefik.udp.routers.pihole-udp.service=pihole-udp"
       - "traefik.udp.services.pihole-udp.loadbalancer.server.port=53"
-    <<: *common-settings
+    <<: [*common-settings, *default-networks]
     volumes:
       - ${PWD}/pihole/volume:/etc/pihole:rw
   traefik:
@@ -111,20 +106,28 @@ services:
       - "traefik.http.routers.traefik.entrypoints=web-secure"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.tls.certresolver=resolver"
-    <<: *common-settings
+    <<: [*common-settings, *default-networks]
     security_opt:
       - no-new-privileges:true
     stdin_open: true
     tty: true
-    # ports:
-    #   - mode: host
-    #     published: 80
-    #     protocol: tcp
-    #     target: 80
-    #   - mode: host
-    #     published: 443
-    #     protocol: tcp
-    #     target: 443
+    ports:
+      - mode: host
+        published: 53
+        protocol: tcp
+        target: 53
+      - mode: host
+        published: 53
+        protocol: udp
+        target: 53
+      - mode: host
+        published: 80
+        protocol: tcp
+        target: 80
+      - mode: host
+        published: 443
+        protocol: tcp
+        target: 443
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
