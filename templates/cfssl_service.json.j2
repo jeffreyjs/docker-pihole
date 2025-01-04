@@ -1,0 +1,20 @@
+{
+    "CN": "{{ item }}.{{ domain }}",
+    "key": {
+        "algo": "rsa",
+        "size": 4096
+    },
+    "names": [
+        {
+            "C": "US",
+            "L": "Salt Lake City",
+            "O": "Platform Engineering",
+            "OU": "DevOps",
+            "ST": "Utah"
+        }
+    ],
+    "hosts": [
+        "{{ item }}.{{ domain }}",
+        "localhost"
+    ]
+}

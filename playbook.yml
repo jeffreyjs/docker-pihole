@@ -1,0 +1,61 @@
+---
+- name: Setup Pi-hole
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Setup cfssl container
+      block:
+        - name: Create directory for cfssl config
+          ansible.builtin.file:
+            name: etc/cfssl/config
+            state: directory
+            mode: "0755"
+        - name: Create cfssl ca.json
+          ansible.builtin.copy:
+            content: "{{ cfssl_ca | to_nice_json }}"
+            dest: etc/cfssl/config/ca.json
+            mode: "0644"
+        - name: Create cfssl config.json
+          ansible.builtin.copy:
+            content: "{{ cfssl_config | to_nice_json }}"
+            dest: etc/cfssl/config/config.json
+            mode: "0644"
+        - name: Template cfssl certificate config files
+          ansible.builtin.template:
+            src: cfssl_service.json.j2
+            dest: etc/cfssl/config/{{ item }}.json
+            mode: "0644"
+          loop: "{{ cfssl_services }}"
+  vars:
+    cfssl_services:
+      - pihole
+      - traefik
+    cfssl_ca:
+      CN: example.net
+      key:
+        algo: rsa
+        size: 4096
+      names:
+        - C: US
+          ST: UT
+          L: Salt Lake City
+          O: Example
+    cfssl_config:
+      signing:
+      default:
+        expiry: 8760h
+      profiles:
+        client:
+          usages:
+            - signing
+            - key encipherment
+            - client auth
+          expiry: 8760h
+        server:
+          usages:
+            - signing
+            - key encipherment
+            - client auth
+            - server auth
+          expiry: 8760h
+    doamin: example.net

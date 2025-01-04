@@ -1,0 +1,10 @@
+---
+failure-threshold: warning
+
+ignored:
+  - DL3018
+
+trustedRegistries:
+  - docker.io
+  - localhost:5000
+  - "*.gcr.io"

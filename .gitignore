@@ -1,0 +1,13 @@
+# Certificates
+*.csr
+*.pem
+
+# Environment
+.env
+
+# Mac OS X
+.DS_Store
+
+# Compose Services
+pihole/*
+traefik/config/letsencrypt/*

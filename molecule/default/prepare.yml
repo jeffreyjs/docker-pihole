@@ -1,0 +1,9 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: Update apt cache on Debian systems.
+      ansible.builtin.apt:
+        update_cache: true
+        name: libasound2t64
+      when: ansible_os_family == "Debian"

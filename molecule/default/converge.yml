@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Install Docker.
+      ansible.builtin.include_role:
+        name: geerlingguy.docker
