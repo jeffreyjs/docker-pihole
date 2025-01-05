@@ -8,7 +8,7 @@ x-common: &common-settings
   restart: unless-stopped
 x-network: &default-networks
   networks:
-    - dns 
+    - dns
 networks:
   dns:
     name: dns
@@ -18,19 +18,16 @@ networks:
         - subnet: 172.20.0.0/24
 services:
   cfssl:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      tags:
-        - cfssl
     container_name: cfssl
-    command: serve -address=0.0.0.0 -config=config/config.json
+    command: serve -address=0.0.0.0 -config=/etc/cfssl/config/config.json
     healthcheck:
       test: curl --fail http://localhost:8888 || exit 1
       interval: 1m30s
       timeout: 30s
       retries: 5
       start_period: 30s
+    image: cfssl/cfssl:${TAG_CFSSL:-latest}
+    <<: [*common-settings, *default-networks]
     volumes:
       - ${PWD}/etc/cfssl:/etc/cfssl:rw
   cloudflared:
@@ -53,7 +50,7 @@ services:
     image: cloudflare/cloudflared:${TAG_CLOUDFLARED:-latest}
     networks:
       dns:
-        ipv4_address: 172.20.0.250 
+        ipv4_address: 172.20.0.250
     <<: *common-settings
   pihole:
     container_name: pihole
