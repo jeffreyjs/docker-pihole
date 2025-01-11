@@ -9,6 +9,7 @@ x-common: &common-settings
 x-network: &default-networks
   networks:
     - dns
+name: pihole
 networks:
   dns:
     name: dns
@@ -21,7 +22,7 @@ services:
     container_name: cfssl
     command: serve -address=0.0.0.0 -config=/etc/cfssl/config/config.json
     healthcheck:
-      test: curl --fail http://localhost:8888 || exit 1
+      test: ["CMD-SHELL", "curl --fail http://localhost:8888 || exit 1"]
       interval: 1m30s
       timeout: 30s
       retries: 5
@@ -35,23 +36,41 @@ services:
     command: proxy-dns
     environment:
       - TUNNEL_DNS_ADDRESS=0.0.0.0
-      - TUNNEL_DNS_PORT=9053
+      - TUNNEL_DNS_PORT=53
       - TUNNEL_DNS_UPSTREAM=https://1.1.1.1/dns-query,https://1.0.0.1/dns-query
     expose:
       - 9053
-    # TODO: Add working healthcheck
-    # healthcheck:
-    #   test: ["CMD-SHELL", "curl -f http://localhost:3333/metrics || exit 1"]
-    #   interval: 1m30s
-    #   timeout: 30s
-    #   retries: 5
-    #   start_period: 30s
+    # TODO: Add better healthcheck
+    healthcheck:
+      test: ["CMD", "cloudflared", "version"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
     hostname: cloudflared
     image: cloudflare/cloudflared:${TAG_CLOUDFLARED:-latest}
     networks:
       dns:
         ipv4_address: 172.20.0.250
     <<: *common-settings
+  cloudflare-health:
+    container_name: cloudflare-health
+    command: sleep infinity
+    depends_on:
+      cloudflared:
+        condition: service_healthy
+    dns:
+      - 172.20.0.250
+    hostname: cloudflare-health
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -vH "accept: application/dns-json" "https://cloudflare-dns.com/dns-query?name=google.com&type=AAAA"']
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    image: quay.io/curl/curl:${TAG_CURL:-latest}
+    init: true
+    <<: [*common-settings, *default-networks]
   pihole:
     container_name: pihole
     dns:
@@ -61,7 +80,7 @@ services:
       - CORS_HOSTS=pihole.${DOMAIN:-local}
       - DNSMASQ_LISTENING=all
       - FTL_CMD_RATE_LIMIT=0/0
-      - PIHOLE_DNS_=172.20.0.254#9053
+      - PIHOLE_DNS_=172.20.0.250#53
       - WEBPASSWORD=${WEBPASSWORD}
     healthcheck:
       test: ["CMD-SHELL", "dig @127.0.0.1 pi.hole || exit 1"]
