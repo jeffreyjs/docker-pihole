@@ -10,21 +10,29 @@
             name: etc/cfssl/config
             state: directory
             mode: "0755"
+            owner: "{{ ansible_user }}"
+            group: "{{ ansible_user }}"
         - name: Create cfssl ca.json
           ansible.builtin.copy:
             content: "{{ cfssl_ca | to_nice_json }}"
             dest: etc/cfssl/config/ca.json
             mode: "0644"
+            owner: "{{ ansible_user }}"
+            group: "{{ ansible_user }}"
         - name: Create cfssl config.json
           ansible.builtin.copy:
             content: "{{ cfssl_config | to_nice_json }}"
             dest: etc/cfssl/config/config.json
             mode: "0644"
+            owner: "{{ ansible_user }}"
+            group: "{{ ansible_user }}"
         - name: Template cfssl certificate config files
           ansible.builtin.template:
             src: cfssl_service.json.j2
             dest: etc/cfssl/config/{{ item }}.json
             mode: "0644"
+            owner: "{{ ansible_user }}"
+            group: "{{ ansible_user }}"
           loop: "{{ cfssl_services }}"
   vars:
     cfssl_services:
@@ -58,4 +66,5 @@
             - client auth
             - server auth
           expiry: 8760h
-    doamin: example.net
+    domain: example.net
+    ansible_user: "{{ lookup('env', 'USER') }}"
