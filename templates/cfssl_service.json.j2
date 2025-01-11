@@ -1,5 +1,5 @@
 {
-    "CN": "{{ item }}.{{ domain }}",
+    "CN": "{{ service }}.{{ domain }}",
     "key": {
         "algo": "rsa",
         "size": 4096
@@ -14,7 +14,7 @@
         }
     ],
     "hosts": [
-        "{{ item }}.{{ domain }}",
+        "{{ service }}.{{ domain }}",
         "localhost"
     ]
 }

@@ -4,6 +4,9 @@
   connection: local
   tasks:
     - name: Setup cfssl container
+      tags:
+        - cfssl
+        - config
       block:
         - name: Create directory for cfssl config
           ansible.builtin.file:
@@ -29,17 +32,38 @@
         - name: Template cfssl certificate config files
           ansible.builtin.template:
             src: cfssl_service.json.j2
-            dest: etc/cfssl/config/{{ item }}.json
+            dest: etc/cfssl/config/{{ service }}.json
             mode: "0644"
             owner: "{{ ansible_user }}"
             group: "{{ ansible_user }}"
           loop: "{{ cfssl_services }}"
+          loop_control:
+            loop_var: service
+    - name: Generate cfssl certificates
+      tags:
+        - cfssl
+        - certificates
+      block:
+        - name: Generate ca certificate
+          ansible.builtin.shell:
+            cmd: "docker compose run --rm \
+              --entrypoint sh cfssl \
+              -c \"cfssl genkey --initca /etc/cfssl/config/ca.json | cfssljson -bare ca\""
+        - name: Generate service certificates
+          ansible.builtin.shell:
+            cmd: "docker compose run --rm --entrypoint sh cfssl \
+              -c \"cfssl gencert -ca ca.pem -ca-key ca-key.pem \
+              -config /etc/cfssl/config/config.json \
+              -profile server /etc/cfssl/config/{{ service }}.json\""
+          loop: "{{ cfssl_services }}"
+          loop_control:
+            loop_var: service
   vars:
     cfssl_services:
       - pihole
       - traefik
     cfssl_ca:
-      CN: example.net
+      CN: "{{ domain }}"
       key:
         algo: rsa
         size: 4096
@@ -50,8 +74,8 @@
           O: Example
     cfssl_config:
       signing:
-      default:
-        expiry: 8760h
+        default:
+          expiry: 8760h
       profiles:
         client:
           usages:
