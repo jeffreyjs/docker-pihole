@@ -31,6 +31,7 @@ services:
     <<: [*common-settings, *default-networks]
     volumes:
       - ${PWD}/etc/cfssl:/etc/cfssl:rw
+    working_dir: /etc/cfssl 
   cloudflared:
     container_name: cloudflared
     command: proxy-dns
