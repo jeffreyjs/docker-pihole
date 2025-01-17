@@ -16,6 +16,8 @@ entryPoints:
           scheme: https
   web-secure:
     address: :443
+  wg-udp:
+    address: :51820/udp
 global:
   checkNewVersion: true
   sendAnonymousUsage: false
