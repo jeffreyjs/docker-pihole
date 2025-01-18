@@ -5,6 +5,10 @@ core:
 entryPoints:
   dns-tcp:
     address: :53/tcp
+    proxyProtocol:
+      trustedIPs:
+        - 127.0.0.1
+        - 172.20.0.0/24
   dns-udp:
     address: :53/udp
   web:
