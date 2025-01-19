@@ -1,3 +1,6 @@
+# Ansible
+ansible/roles/*
+
 # Certificates
 *.csr
 *.pem
@@ -14,3 +17,6 @@ traefik/config/letsencrypt/*
 
 # Mac OS X
 .DS_Store
+
+# Vagrant
+.vagrant

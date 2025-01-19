@@ -1,0 +1,23 @@
+---
+- name: Pi-Hole Docker
+  become: true
+  become_method: ansible.builtin.sudo
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Setup system user
+      block:
+        - name: Create default system user
+          ansible.builtin.include_role:
+            name: ryandaniels.users
+        - name: Get system user info
+          ansible.builtin.user:
+            name: "{{ users[0].username }}"
+          register: user_info
+      tags:
+        - setup
+    - name: Install docker
+      ansible.builtin.include_role:
+        name: geerlingguy.docker
+  vars_files:
+    - vars/vars.yml
