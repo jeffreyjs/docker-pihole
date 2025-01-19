@@ -80,7 +80,7 @@ services:
       - '127.0.0.1'
       - '1.1.1.1'
     environment:
-      CORS_HOSTS: pihole.${DOMAIN:-local}
+      CORS_HOSTS: ${PIHOLE_CORS:-local}
       DNSMASQ_LISTENING: 'all'
       FTL_CMD_RATE_LIMIT: '0/0'
       PIHOLE_DNS_: '172.20.0.250#53'
