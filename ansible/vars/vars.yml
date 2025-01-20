@@ -1,11 +1,8 @@
 ---
-apt_install_packages:
-  - name: acl
-
 print_facts: false
 
 docker_users:
-  - "{{ user_info.name }}"
+  - "{{ users[0].username }}"
 
 users:
   - username: pihole

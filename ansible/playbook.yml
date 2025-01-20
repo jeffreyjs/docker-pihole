@@ -5,17 +5,11 @@
   hosts: all
   gather_facts: true
   tasks:
-    - name: Setup system user
-      block:
-        - name: Create default system user
-          ansible.builtin.include_role:
-            name: ryandaniels.users
-        - name: Get system user info
-          ansible.builtin.user:
-            name: "{{ users[0].username }}"
-          register: user_info
+    - name: Create default system user
+      ansible.builtin.include_role:
+        name: ryandaniels.users
       tags:
-        - setup
+        - user
     - name: Install docker
       ansible.builtin.include_role:
         name: geerlingguy.docker
