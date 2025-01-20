@@ -24,9 +24,10 @@
         regexp: '#DNSStubListener=yes'
         replace: 'DNSStubListener=no'
       notify: Restart resolved
-    - name: Add DNS server to resolv.conf
-      ansible.builtin.lineinfile:
+    - name: Set DNS server in resolv.conf
+      ansible.builtin.replace:
         path: /etc/resolv.conf
-        line: 'nameserver 1.1.1.1'
+        regexp: '^(.*)nameserver(.*)$'
+        replace: 'nameserver 1.1.1.1'
   vars_files:
     - vars/vars.yml
