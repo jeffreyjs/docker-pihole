@@ -6,10 +6,10 @@ ansible/roles/*
 *.pem
 
 # CFSSL Config
-etc/cfssl/config/*
+docker/etc/cfssl/config/*
 
 # Compose Services
-pihole/*
+docker/pihole/*
 traefik/config/letsencrypt/*
 
 # Environment
