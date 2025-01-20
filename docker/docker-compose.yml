@@ -186,7 +186,7 @@ services:
       traefik.udp.routers.wireguard-udp.entrypoints: wg-udp
       traefik.udp.routers.wireguard-udp.service: wireguard-udp
       traefik.udp.services.wireguard-udp.loadbalancer.server.port: 51820
-    <<: [*common-settings, *network-default]
+    <<: [*common-settings, *default-networks]
     sysctls:
       net.ipv4.conf.all.src_valid_mark: 1
       net.ipv4.ip_forward: 1
