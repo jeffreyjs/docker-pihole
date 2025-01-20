@@ -4,6 +4,11 @@
   become_method: ansible.builtin.sudo
   hosts: all
   gather_facts: true
+  handlers:
+    - name: Restart resolved
+      ansible.builtin.systemd:
+        name: systemd-resolved
+        state: restarted
   tasks:
     - name: Create default system user
       ansible.builtin.include_role:
@@ -13,5 +18,15 @@
     - name: Install docker
       ansible.builtin.include_role:
         name: geerlingguy.docker
+    - name: Disable resolved stub listener
+      ansible.builtin.replace:
+        path: /etc/systemd/resolved.conf
+        regexp: '#DNSStubListener=yes'
+        replace: 'DNSStubListener=no'
+      notify: Restart resolved
+    - name: Add DNS server to resolv.conf
+      ansible.builtin.lineinfile:
+        path: /etc/resolv.conf
+        line: 'nameserver 1.1.1.1'
   vars_files:
     - vars/vars.yml
