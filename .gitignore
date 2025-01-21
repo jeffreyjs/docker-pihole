@@ -20,3 +20,6 @@ traefik/config/letsencrypt/*
 
 # Vagrant
 .vagrant
+
+# virtualenv files
+venv/*
