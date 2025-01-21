@@ -1,7 +1,11 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+require 'yaml'
 
 VAGRANT_COMMAND = ARGV[0]
+
+ansible_vars = YAML.load_file('./ansible/vars/vars.yml')
+username = ansible_vars["users"][0]["username"]
 
 box = "bento/ubuntu-24.04"
 provider = "virtualbox"
@@ -10,7 +14,6 @@ python_version = "python3.12"
 ansible_verbose_level = ENV.fetch('VAGRANT_ANSIBLE_VERBOSE_LEVEL') { 'v' }
 forward_ports = ENV.fetch("VAGRANT_FORWARD_PORTS") { "true" }
 home_dir = ENV["HOME"]
-username = "pihole"
 
 # Convert string to boolean
 def convert_to_boolean(string)
