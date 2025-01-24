@@ -15,10 +15,8 @@ hostname = "test"
 python_version = "python3.12"
 ansible_verbose_level = ENV.fetch('VAGRANT_ANSIBLE_VERBOSE_LEVEL') { 'v' }
 forward_ports = ENV.fetch("VAGRANT_FORWARD_PORTS") { "true" }
+personal_key = ENV.fetch("VAGRANT_PERSONAL_SSH_KEY") { "false" }
 home_dir = ENV["HOME"]
-# Get public key from file
-insecure_key = 'https://raw.githubusercontent.com/hashicorp/vagrant/refs/heads/main/keys/vagrant.pub'
-ssh_pub_key = Net::HTTP.get(URI.parse("#{insecure_key}"))
 
 # Convert string to boolean
 def convert_to_boolean(string)
@@ -28,6 +26,14 @@ end
 # Check if the VM is already provisioned
 def provisioned?(vm_name, provider)
     File.exist?(".vagrant/machines/#{vm_name}/#{provider}/action_provision")
+end
+
+if convert_to_boolean("#{personal_key}")
+    ssh_pub_key = ''
+else
+    # Get public key from file
+    insecure_key = 'https://raw.githubusercontent.com/hashicorp/vagrant/refs/heads/main/keys/vagrant.pub'
+    ssh_pub_key = Net::HTTP.get(URI.parse("#{insecure_key}"))
 end
 
 Vagrant.configure("2") do |config|
@@ -54,7 +60,7 @@ Vagrant.configure("2") do |config|
         config.ssh.private_key_path = ["#{home_dir}/.vagrant.d/insecure_private_keys/vagrant.key.ed25519"]
     end
 
-    if "#{convert_to_boolean(forward_ports)}"
+    if convert_to_boolean("#{forward_ports}")
         ports = [{guest: 80, host: 8080},{guest: 443, host: 8443},{guest: 53, host: 9053},{guest: 51820, host: 51820}]
         ports.each do |port|
             config.vm.network "forwarded_port", guest: port[:guest], host: port[:host]
