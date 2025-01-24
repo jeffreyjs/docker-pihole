@@ -9,6 +9,12 @@
       ansible.builtin.systemd:
         name: systemd-resolved
         state: restarted
+  pre-tasks:
+    - name: Get public key
+      community.crypto.openssh_keypair:
+        keyfile: "{{ openssh_keyfile }}"
+        key_format: openssh
+      register: key_result
   tasks:
     - name: Create default system user
       ansible.builtin.include_role:
