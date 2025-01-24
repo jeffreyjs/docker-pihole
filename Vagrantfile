@@ -1,5 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+require 'net/http'
+require 'uri'
 require 'yaml'
 
 VAGRANT_COMMAND = ARGV[0]
@@ -14,9 +16,9 @@ python_version = "python3.12"
 ansible_verbose_level = ENV.fetch('VAGRANT_ANSIBLE_VERBOSE_LEVEL') { 'v' }
 forward_ports = ENV.fetch("VAGRANT_FORWARD_PORTS") { "true" }
 home_dir = ENV["HOME"]
-# To-Do: Get public key from file
-# ssh_pub_key = File.readlines("#{ssh_key}.pub").first.strip
-ssh_pub_key = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN1YdxBpNlzxDqfJyw/QKow1F+wvG9hXGoqiysfJOn5Y vagrant insecure public key'
+# Get public key from file
+insecure_key = 'https://raw.githubusercontent.com/hashicorp/vagrant/refs/heads/main/keys/vagrant.pub'
+ssh_pub_key = Net::HTTP.get(URI.parse("#{insecure_key}"))
 
 # Convert string to boolean
 def convert_to_boolean(string)
