@@ -14,6 +14,9 @@ python_version = "python3.12"
 ansible_verbose_level = ENV.fetch('VAGRANT_ANSIBLE_VERBOSE_LEVEL') { 'v' }
 forward_ports = ENV.fetch("VAGRANT_FORWARD_PORTS") { "true" }
 home_dir = ENV["HOME"]
+# To-Do: Get public key from file
+# ssh_pub_key = File.readlines("#{ssh_key}.pub").first.strip
+ssh_pub_key = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN1YdxBpNlzxDqfJyw/QKow1F+wvG9hXGoqiysfJOn5Y vagrant insecure public key'
 
 # Convert string to boolean
 def convert_to_boolean(string)
@@ -73,7 +76,7 @@ Vagrant.configure("2") do |config|
         c.vm.provision "ansible" do |ansible|
             ansible.compatibility_mode = "2.0"
             ansible.playbook    = "./ansible/playbook.yml"
-            ansible.extra_vars  = { ansible_python_interpreter:"/usr/bin/python3" }
+            ansible.extra_vars  = { ansible_python_interpreter: "/usr/bin/python3", vagrant_insecure_pub_key: "#{ssh_pub_key}"}
             ansible.verbose     = "#{ansible_verbose_level}"
         end
     end

@@ -4,14 +4,12 @@ print_facts: false
 docker_users:
   - "{{ users[0].username }}"
 
-openssh_keyfile: "{{ lookup('ansible.builtin.env', 'HOMEE' }}/.vagrant.d/insecure_private_keys/vagrant.key.ed25519"
-
 users:
   - username: pihole
     comment: Pi-Hole User
     shell: /bin/bash
-    ssh_key: "{{ key_result.public_key }}"
     exclusive_ssh_key: yes
+    ssh_key: "{{ vagrant_insecure_pub_key }}"
     use_sudo: yes
     use_sudo_nopass: yes
     user_state: present
