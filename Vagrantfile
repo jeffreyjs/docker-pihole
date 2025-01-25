@@ -29,8 +29,11 @@ def provisioned?(vm_name, provider)
 end
 
 if convert_to_boolean("#{personal_key}")
-    ssh_pub_key = ''
+    ssh_key = id_ed25519
+    private_key_path = "#{home_dir}/.ssh/#{ssh_key}"
+ssh_pub_key = File.readlines("#{private_key_path}.pub").first.strip
 else
+    private_key_path = "#{home_dir}/.vagrant.d/insecure_private_keys/vagrant.key.ed25519"
     # Get public key from file
     insecure_key = 'https://raw.githubusercontent.com/hashicorp/vagrant/refs/heads/main/keys/vagrant.pub'
     ssh_pub_key = Net::HTTP.get(URI.parse("#{insecure_key}"))
@@ -57,7 +60,8 @@ Vagrant.configure("2") do |config|
         else
             config.ssh.username = "vagrant"
         end
-        config.ssh.private_key_path = ["#{home_dir}/.vagrant.d/insecure_private_keys/vagrant.key.ed25519"]
+        
+        config.ssh.private_key_path = ["#{private_key_path}"]
     end
 
     if convert_to_boolean("#{forward_ports}")
