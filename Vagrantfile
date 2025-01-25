@@ -88,7 +88,7 @@ Vagrant.configure("2") do |config|
         c.vm.provision "ansible" do |ansible|
             ansible.compatibility_mode = "2.0"
             ansible.playbook    = "./ansible/playbook.yml"
-            ansible.extra_vars  = { ansible_python_interpreter: "/usr/bin/python3", vagrant_insecure_pub_key: "#{ssh_pub_key}"}
+            ansible.extra_vars  = { ansible_python_interpreter: "/usr/bin/python3", ssh_pub_key: "#{ssh_pub_key}"}
             ansible.verbose     = "#{ansible_verbose_level}"
         end
     end

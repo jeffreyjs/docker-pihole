@@ -9,7 +9,7 @@ users:
     comment: Pi-Hole User
     shell: /bin/bash
     exclusive_ssh_key: yes
-    ssh_key: "{{ vagrant_insecure_pub_key }}"
+    ssh_key: "{{ ssh_pub_key }}"
     use_sudo: yes
     use_sudo_nopass: yes
     user_state: present
