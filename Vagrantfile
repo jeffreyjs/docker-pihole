@@ -29,7 +29,7 @@ def provisioned?(vm_name, provider)
 end
 
 if convert_to_boolean("#{personal_key}")
-    ssh_key = id_ed25519
+    ssh_key = ENV.fetch("VAGRANT_SSH_KEY") { "id_ed25519" }
     private_key_path = "#{home_dir}/.ssh/#{ssh_key}"
 ssh_pub_key = File.readlines("#{private_key_path}.pub").first.strip
 else
