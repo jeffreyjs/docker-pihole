@@ -83,6 +83,10 @@ services:
       CORS_HOSTS: ${PIHOLE_CORS:-local}
       DNSMASQ_LISTENING: 'all'
       FTL_CMD_RATE_LIMIT: '0/0'
+      FRLCONF_IGNORE_LOCALHOST: 'true'
+      FTLCONF_MAXDBDAYS: '42'
+      FTLCONF_MAXLOGAGE: '8.0'
+      FTLCONF_PRIVACYLEVEL: '3'
       PIHOLE_DNS_: '172.20.0.250#53'
       WEBPASSWORD: ${WEBPASSWORD}
     healthcheck:
