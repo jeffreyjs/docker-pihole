@@ -67,7 +67,7 @@ Vagrant.configure("2") do |config|
     if convert_to_boolean("#{forward_ports}")
         ports = [{guest: 80, host: 8080, protocol: "tcp"},{guest: 443, host: 8443, protocol: "tcp"},{guest: 53, host: 9053, protocol: "udp"},{guest: 51820, host: 51820, protocol: "udp"}]
         ports.each do |port|
-            config.vm.network "forwarded_port", guest: port[:guest], host: port[:host], protocol: port[:proto]
+            config.vm.network "forwarded_port", guest: port[:guest], host: port[:host], protocol: port[:protocol]
         end
     end
 
