@@ -1,9 +1,10 @@
+---
 x-common: &common-settings
   logging:
     driver: json-file
     options:
       max-size: 100m
-      max-file: '3'
+      max-file: "3"
   platform: linux/amd64
   restart: unless-stopped
 x-network: &default-networks
@@ -18,13 +19,13 @@ networks:
       com.docker.network.driver.mtu: 1500
     ipam:
       config:
-        - subnet: '172.20.0.0/24'
+        - subnet: "172.20.0.0/24"
 services:
   cfssl:
     container_name: cfssl
     command: serve -address=0.0.0.0 -config=/etc/cfssl/config/config.json
     healthcheck:
-      test: ['CMD-SHELL', 'curl --fail http://localhost:8888 || exit 1']
+      test: ["CMD-SHELL", "curl --fail http://localhost:8888 || exit 1"]
       interval: 1m30s
       timeout: 30s
       retries: 5
@@ -38,14 +39,14 @@ services:
     container_name: cloudflared
     command: proxy-dns
     environment:
-      TUNNEL_DNS_ADDRESS: '0.0.0.0'
-      TUNNEL_DNS_PORT: '53'
-      TUNNEL_DNS_UPSTREAM: 'https://1.1.1.1/dns-query,https://1.0.0.1/dns-query'
+      TUNNEL_DNS_ADDRESS: "0.0.0.0"
+      TUNNEL_DNS_PORT: "53"
+      TUNNEL_DNS_UPSTREAM: "https://1.1.1.1/dns-query,https://1.0.0.1/dns-query"
     expose:
       - 9053
     # TODO: Add better healthcheck
     healthcheck:
-      test: ['CMD', 'cloudflared', 'version']
+      test: ["CMD", "cloudflared", "version"]
       interval: 1m30s
       timeout: 30s
       retries: 5
@@ -54,7 +55,7 @@ services:
     image: cloudflare/cloudflared:${TAG_CLOUDFLARED:-latest}
     networks:
       dns:
-        ipv4_address: '172.20.0.250'
+        ipv4_address: "172.20.0.250"
     <<: *common-settings
   cloudflare-health:
     container_name: cloudflare-health
@@ -63,10 +64,10 @@ services:
       cloudflared:
         condition: service_healthy
     dns:
-      - '172.20.0.250'
+      - "172.20.0.250"
     hostname: cloudflare-health
     healthcheck:
-      test: ['CMD-SHELL', 'curl -vH "accept: application/dns-json" "https://cloudflare-dns.com/dns-query?name=google.com&type=AAAA"']
+      test: ["CMD-SHELL", 'curl -vH "accept: application/dns-json" "https://cloudflare-dns.com/dns-query?name=google.com&type=AAAA"']
       interval: 1m30s
       timeout: 30s
       retries: 5
@@ -77,20 +78,20 @@ services:
   pihole:
     container_name: pihole
     dns:
-      - '127.0.0.1'
-      - '1.1.1.1'
+      - "127.0.0.1"
+      - "1.1.1.1"
     environment:
       CORS_HOSTS: ${PIHOLE_CORS:-local}
-      DNSMASQ_LISTENING: 'all'
-      FTL_CMD_RATE_LIMIT: '0/0'
-      FRLCONF_IGNORE_LOCALHOST: 'true'
-      FTLCONF_MAXDBDAYS: '42'
-      FTLCONF_MAXLOGAGE: '8.0'
-      FTLCONF_PRIVACYLEVEL: '3'
-      PIHOLE_DNS_: '172.20.0.250#53'
+      DNSMASQ_LISTENING: "all"
+      FTL_CMD_RATE_LIMIT: "0/0"
+      FRLCONF_IGNORE_LOCALHOST: "true"
+      FTLCONF_MAXDBDAYS: "42"
+      FTLCONF_MAXLOGAGE: "8.0"
+      FTLCONF_PRIVACYLEVEL: "3"
+      PIHOLE_DNS_: "172.20.0.250#53"
       WEBPASSWORD: ${WEBPASSWORD}
     healthcheck:
-      test: ['CMD-SHELL', 'dig @127.0.0.1 pi.hole || exit 1']
+      test: ["CMD-SHELL", "dig @127.0.0.1 pi.hole || exit 1"]
       interval: 1m30s
       timeout: 30s
       retries: 5
@@ -126,7 +127,7 @@ services:
     environment:
       DOMAIN: ${DOMAIN:-local}
     healthcheck:
-      test: ['CMD', 'traefik', 'healthcheck']
+      test: ["CMD", "traefik", "healthcheck"]
       interval: 1m30s
       timeout: 30s
       retries: 5
@@ -176,15 +177,15 @@ services:
       traefik:
         condition: service_healthy
     environment:
-      PUID: '1000'
-      PGID: '1000'
-      TZ: 'America/Denver'
-      SERVERURL: 'auto'
-      SERVERPORT: '51820'
-      ALLOWEDIPS: '0.0.0.0/0'
-      PEERS: '10'
-      PEERDNS: '172.20.0.251'
-      INTERNAL_SUBNET: '172.21.0.0/24'
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "America/Denver"
+      SERVERURL: "auto"
+      SERVERPORT: "51820"
+      ALLOWEDIPS: "0.0.0.0/0"
+      PEERS: "10"
+      PEERDNS: "172.20.0.251"
+      INTERNAL_SUBNET: "172.21.0.0/24"
     image: linuxserver/wireguard:${TAG_WIREGUARD:-latest}
     labels:
       traefik.enable: true
@@ -198,3 +199,4 @@ services:
     volumes:
       - ${PWD}/wireguard:/config:rw
       - /lib/modules:/lib/modules
+
