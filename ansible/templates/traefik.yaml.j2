@@ -36,10 +36,10 @@ providers:
   providersThrottleDuration: 2s
   docker:
     defaultRule:
-{%- raw %} 
+{%- raw %}
       "Host(`{{ index .Labels \"com.docker.compose.service\"}}\
       .{{ env \"DOMAIN\" }}`)"
-{%- endraw %}  
+{% endraw %}
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
     network: dns
