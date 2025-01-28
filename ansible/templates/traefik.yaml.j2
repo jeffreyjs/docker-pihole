@@ -30,10 +30,12 @@ log:
 ping: {}
 providers:
   providersThrottleDuration: 2s
-  docker:
+  docker: 
     defaultRule:
+{% raw %} 
       "Host(`{{ index .Labels \"com.docker.compose.service\"}}\
       .{{ env \"DOMAIN\" }}`)"
+{%- endraw -%}  
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
     network: dns

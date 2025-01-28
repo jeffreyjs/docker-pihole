@@ -11,7 +11,7 @@ username = ansible_vars["users"][0]["username"]
 
 box = "bento/ubuntu-24.04"
 provider = "virtualbox"
-hostname = "test"
+hostname = ansible_vars["compose_project_name"]
 python_version = "python3.12"
 ansible_verbose_level = ENV.fetch("VAGRANT_ANSIBLE_VERBOSE_LEVEL") { "v" }
 forward_ports = ENV.fetch("VAGRANT_FORWARD_PORTS") { "true" }
@@ -74,9 +74,6 @@ Vagrant.configure("2") do |config|
     config.vm.define "#{hostname}" do |c|
         c.vm.box = vm_box
         c.vm.hostname = "#{hostname}"
-        c.vm.provision "shell",
-            inline: "sudo apt-get update && sudo apt-get upgrade -y",
-            run: "always"
         c.vm.provision "shell", inline: <<-EOC
             systemctl is-active --quiet sshd.service
             if [ $? == 0 ]; then
