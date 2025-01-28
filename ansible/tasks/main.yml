@@ -1,0 +1,8 @@
+---
+
+- name: Setup cfssl container and generate certificates
+  ansible.builtin.include_tasks: cfssl.yml
+  tags:
+    - cfssl
+    - config
+    - certificates

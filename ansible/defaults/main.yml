@@ -1,0 +1,42 @@
+---
+ansible_user: "{{ lookup('env', 'USER') }}"
+
+compose_directory: /dkr
+compose_project_name: pihole
+
+cfssl_services:
+  - pihole
+  - traefik
+cfssl_ca:
+  CN: "{{ domain }}"
+  key:
+    algo: rsa
+    size: 4096
+  names:
+    - C: US
+      ST: UT
+      L: Salt Lake City
+      O: Example
+cfssl_config:
+  signing:
+    default:
+      expiry: 8760h
+  profiles:
+    client:
+      usages:
+        - signing
+        - key encipherment
+        - client auth
+      expiry: 8760h
+    server:
+      usages:
+        - signing
+        - key encipherment
+        - client auth
+        - server auth
+      expiry: 8760h
+
+domain: example.net
+
+pihole_external_dns: false
+wireguard_enabled: true
