@@ -14,3 +14,8 @@
     - config
     - certificates
 
+- name: Setup traefik container
+  ansible.builtin.include_tasks: traefik.yml
+  tags:
+    - config
+    - traefik

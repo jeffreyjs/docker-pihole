@@ -3,6 +3,7 @@ api:
 core:
   defaultRuleSyntax: v3
 entryPoints:
+{% if pihole_external_dns %}
   dns-tcp:
     address: :53/tcp
     proxyProtocol:
@@ -11,6 +12,7 @@ entryPoints:
         - 172.20.0.0/24
   dns-udp:
     address: :53/udp
+{% endif %}
   web:
     address: :80
     http:
@@ -20,8 +22,10 @@ entryPoints:
           scheme: https
   web-secure:
     address: :443
+{% if wireguard_enabled %}
   wg-udp:
     address: :51820/udp
+{% endif %}
 global:
   checkNewVersion: true
   sendAnonymousUsage: false
@@ -30,12 +34,12 @@ log:
 ping: {}
 providers:
   providersThrottleDuration: 2s
-  docker: 
+  docker:
     defaultRule:
-{% raw %} 
+{%- raw %} 
       "Host(`{{ index .Labels \"com.docker.compose.service\"}}\
       .{{ env \"DOMAIN\" }}`)"
-{%- endraw -%}  
+{%- endraw %}  
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
     network: dns

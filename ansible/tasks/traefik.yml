@@ -1,0 +1,22 @@
+---
+
+- name: Setup traefik container
+  tags:
+    - config
+    - traefik
+  block:
+    - name: Create directory for cfssl config
+      ansible.builtin.file:
+        name: "{{ compose_directory }}/traefik/config"
+        state: directory
+        mode: "0755"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+    - name: Template traefik config files
+      ansible.builtin.template:
+        src: traefik.yaml.j2
+        dest: "{{ compose_directory }}/traefik/config/traefik.yaml"
+        mode: "0644"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
