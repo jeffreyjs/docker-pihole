@@ -9,12 +9,35 @@
     group: "{{ ansible_user }}"
   register: compose_result
 
-- name: Setup cfssl container and generate certificates
-  ansible.builtin.include_tasks: cfssl.yml
-  tags:
-    - cfssl
-    - config
-    - certificates
+- name: Setup docker-compose env
+  block:
+    - name: Set compose env file path fact
+      ansible.builtin.set_fact:
+        compose_env_file: "{{ compose_directory }}/.env"
+    - name: Apply container tag variables
+      ansible.builtin.lineinfile:
+        path: "{{ compose_env_file }}"
+        regexp: "^TAG_{{ item.name | upper }}="
+        line: "TAG_{{ item.name | upper }}={{ item.tag }}"
+        create: true
+        mode: '0644'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      loop: "{{ container_tags }}"
+      loop_control:
+        label: "{{ item.name }}"
+    - name: Add PIHOLE_CORS variable
+      ansible.builtin.lineinfile:
+        path: "{{ compose_env_file }}"
+        regexp: '^PIHOLE_CORS='
+        line: "PIHOLE_CORS=pihole.{{ domain }}"
+
+#- name: Setup cfssl container and generate certificates
+#  ansible.builtin.include_tasks: cfssl.yml
+#  tags:
+#    - cfssl
+#    - config
+#    - certificates
 
 - name: Setup traefik container
   ansible.builtin.include_tasks: traefik.yml
