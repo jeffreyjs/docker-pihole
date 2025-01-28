@@ -31,7 +31,12 @@
         path: "{{ compose_env_file }}"
         regexp: '^PIHOLE_CORS='
         line: "PIHOLE_CORS=pihole.{{ domain }}"
-
+    - name: Add DOMAIN variable
+      ansible.builtin.lineinfile:
+        path: "{{ compose_env_file }}"
+        regexp: '^DOMAIN='
+        line: "DOMAIN={{ domain }}"
+        
 #- name: Setup cfssl container and generate certificates
 #  ansible.builtin.include_tasks: cfssl.yml
 #  tags:

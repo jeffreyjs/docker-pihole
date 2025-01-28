@@ -42,11 +42,11 @@ container_tags:
   - name: cfssl
     tag: v1.6.5
   - name: cloudflared
-    tag: 2024.12.2
+    tag: 2025.1.0
   - name: pihole
     tag: 2024.07.0
   - name: traefik
-    tag: v3.2.3
+    tag: v3.3.2
   - name: wireguard
     tag: 1.0.20210914
 
