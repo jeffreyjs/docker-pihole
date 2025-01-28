@@ -57,24 +57,6 @@ services:
       dns:
         ipv4_address: "172.20.0.250"
     <<: *common-settings
-  cloudflare-health:
-    container_name: cloudflare-health
-    command: sleep infinity
-    depends_on:
-      cloudflared:
-        condition: service_healthy
-    dns:
-      - "172.20.0.250"
-    hostname: cloudflare-health
-    healthcheck:
-      test: ["CMD-SHELL", 'curl -vH "accept: application/dns-json" "https://cloudflare-dns.com/dns-query?name=google.com&type=AAAA"']
-      interval: 1m30s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
-    image: quay.io/curl/curl:${TAG_CURL:-latest}
-    init: true
-    <<: [*common-settings, *default-networks]
   pihole:
     container_name: pihole
     dns:
@@ -199,4 +181,3 @@ services:
     volumes:
       - ${PWD}/wireguard:/config:rw
       - /lib/modules:/lib/modules
-
