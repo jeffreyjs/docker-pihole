@@ -47,12 +47,16 @@
         cmd: "docker compose run --rm \
           --entrypoint sh cfssl \
           -c \"cfssl genkey --initca /etc/cfssl/config/ca.json | cfssljson -bare ca\""
+      args:
+        chdir: "{{ compose_directory }}"
     - name: Generate service certificates
       ansible.builtin.shell:
         cmd: "docker compose run --rm --entrypoint sh cfssl \
           -c \"cfssl gencert -ca ca.pem -ca-key ca-key.pem \
           -config /etc/cfssl/config/config.json \
           -profile server /etc/cfssl/config/{{ service }}.json\""
+      args:
+        chdir: "{{ compose_directory }}"
       loop: "{{ cfssl_services }}"
       loop_control:
         loop_var: service

@@ -1,17 +1,58 @@
 ---
 print_facts: false
 
+ansible_user: "{{ users[0].username }}"
+
+cfssl_services:
+  - pihole
+  - traefik
+cfssl_ca:
+  CN: "{{ domain }}"
+  key:
+    algo: rsa
+    size: 4096
+  names:
+    - C: US
+      ST: UT
+      L: Salt Lake City
+      O: Example
+cfssl_config:
+  signing:
+    default:
+      expiry: 8760h
+  profiles:
+    client:
+      usages:
+        - signing
+        - key encipherment
+        - client auth
+      expiry: 8760h
+    server:
+      usages:
+        - signing
+        - key encipherment
+        - client auth
+        - server auth
+      expiry: 8760h
+
+compose_directory: /dkr
+compose_project_name: pihole
+
+domain: example.net
 docker_users:
-  - "{{ users[0].username }}"
+  - "{{ ansible_user }}"
 
 users:
   - username: pihole
     comment: Pi-Hole User
     shell: /bin/bash
-    exclusive_ssh_key: yes
+    exclusive_ssh_key: true
     ssh_key: "{{ ssh_pub_key }}"
-    use_sudo: yes
-    use_sudo_nopass: yes
+    use_sudo: true
+    use_sudo_nopass: true
     user_state: present
     servers:
       - all
+
+pihole_external_dns: false
+wireguard_enabled: true

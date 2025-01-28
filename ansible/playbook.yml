@@ -4,6 +4,11 @@
   become_method: ansible.builtin.sudo
   hosts: all
   gather_facts: true
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
   handlers:
     - name: Restart resolved
       ansible.builtin.systemd:
@@ -46,5 +51,7 @@
               nameserver 127.0.0.1
               nameserver 1.1.1.1
               search lan
+    - name: Setup compose project
+      ansible.builtin.include_tasks: tasks/main.yml
   vars_files:
     - vars/vars.yml
