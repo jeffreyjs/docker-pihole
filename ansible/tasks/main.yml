@@ -1,9 +1,18 @@
 ---
 
+- name: Create compose directory
+  ansible.builtin.file:
+    path: "{{ compose_directory }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  register: compose_directory_result
+
 - name: Create docker-compose.yml
   ansible.builtin.template:
     src: docker-compose.yml.j2
-    dest: "{{ compose_directory }}/docker-compose.yml"
+    dest: "{{ compose_directory_result.path }}/docker-compose.yml"
     mode: '0644'
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -13,7 +22,7 @@
   block:
     - name: Set compose env file path fact
       ansible.builtin.set_fact:
-        compose_env_file: "{{ compose_directory }}/.env"
+        compose_env_file: "{{ compose_directory_result.path }}/.env"
     - name: Apply container tag variables
       ansible.builtin.lineinfile:
         path: "{{ compose_env_file }}"
@@ -36,7 +45,7 @@
         path: "{{ compose_env_file }}"
         regexp: '^DOMAIN='
         line: "DOMAIN={{ domain }}"
-        
+
 #- name: Setup cfssl container and generate certificates
 #  ansible.builtin.include_tasks: cfssl.yml
 #  tags:

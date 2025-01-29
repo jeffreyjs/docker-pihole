@@ -7,29 +7,30 @@
   block:
     - name: Create directory for cfssl config
       ansible.builtin.file:
-        name: "{{ compose_directory }}/etc/cfssl/config"
+        name: "{{ compose_directory_result.path }}/etc/cfssl/config"
         state: directory
         mode: "0755"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
+      register: cfssl_directory_result
     - name: Create cfssl ca.json
       ansible.builtin.copy:
         content: "{{ cfssl_ca | to_nice_json }}"
-        dest: "{{ compose_directory }}/etc/cfssl/config/ca.json"
+        dest: "{{ ccfssl_directory_result.path }}/ca.json"
         mode: "0644"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
     - name: Create cfssl config.json
       ansible.builtin.copy:
         content: "{{ cfssl_config | to_nice_json }}"
-        dest: "{{ compose_directory }}/etc/cfssl/config/config.json"
+        dest: "{{ cfssl_directory_result.path }}/config.json"
         mode: "0644"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
     - name: Template cfssl certificate config files
       ansible.builtin.template:
         src: cfssl_service.json.j2
-        dest: "{{ compose_directory }}/etc/cfssl/config/{{ service }}.json"
+        dest: "{{ cfssl_directory_result.path }}/{{ service }}.json"
         mode: "0644"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
@@ -48,7 +49,7 @@
           --entrypoint sh cfssl \
           -c \"cfssl genkey --initca /etc/cfssl/config/ca.json | cfssljson -bare ca\""
       args:
-        chdir: "{{ compose_directory }}"
+        chdir: "{{ compose_directory_result.path }}"
     - name: Generate service certificates
       ansible.builtin.shell:
         cmd: "docker compose run --rm --entrypoint sh cfssl \
@@ -56,7 +57,7 @@
           -config /etc/cfssl/config/config.json \
           -profile server /etc/cfssl/config/{{ service }}.json\""
       args:
-        chdir: "{{ compose_directory }}"
+        chdir: "{{ compose_directory_result.path }}"
       loop: "{{ cfssl_services }}"
       loop_control:
         loop_var: service
