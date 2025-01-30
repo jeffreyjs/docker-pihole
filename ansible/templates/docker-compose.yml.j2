@@ -8,6 +8,7 @@ x-common: &common-settings
       max-size: 100m
       max-file: "3"
   platform: linux/amd64
+  pull_policy: missing
   restart: unless-stopped
 x-network: &default-networks
   networks:
@@ -35,7 +36,7 @@ services:
     image: cfssl/cfssl:${TAG_CFSSL:-latest}
     <<: [*common-settings, *default-networks]
     volumes:
-      - ${PWD}/etc/cfssl:/etc/cfssl:rw
+      - {{ compose_directory }}/etc/cfssl:/etc/cfssl:rw
     working_dir: /etc/cfssl
   cloudflared:
     container_name: cloudflared
@@ -119,7 +120,7 @@ services:
         ipv4_address: {{ docker_network.pihole_ip }}
     <<: *common-settings
     volumes:
-      - ${PWD}/pihole/volume:/etc/pihole:rw
+      - {{ compose_directory }}/pihole/volume:/etc/pihole:rw
   traefik:
     container_name: traefik
     environment:
@@ -169,7 +170,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
-      - ${PWD}/traefik/config/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - {{ compose_directory }}/traefik/config/traefik.yaml:/etc/traefik/traefik.yaml:ro
 {% if wireguard_enabled %}
   wireguard:
     container_name: wireguard
@@ -200,6 +201,6 @@ services:
       net.ipv4.conf.all.src_valid_mark: 1
       net.ipv4.ip_forward: 1
     volumes:
-      - ${PWD}/wireguard:/config:rw
+      - {{ compose_directory }}/wireguard:/config:rw
       - /lib/modules:/lib/modules
 {% endif %}

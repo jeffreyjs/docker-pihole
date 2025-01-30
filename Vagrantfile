@@ -7,7 +7,6 @@ require 'yaml'
 VAGRANT_COMMAND = ARGV[0]
 
 ansible_vars = YAML.load_file("./ansible/vars/vars.yml")
-username = ansible_vars["users"][0]["username"]
 
 box = "bento/ubuntu-24.04"
 provider = "virtualbox"
@@ -56,13 +55,16 @@ Vagrant.configure("2") do |config|
 
     if provisioned?("#{hostname}", "#{provider}")
         if VAGRANT_COMMAND == "ssh"
-            config.ssh.username = "#{username}"
+            username = ansible_vars["users"][0]["username"]
         else
-            config.ssh.username = "vagrant"
+            username = "vagrant"
         end
-        
-        config.ssh.private_key_path = ["#{private_key_path}"]
+    else
+        username = "vagrant"
     end
+
+    config.ssh.username = "#{username}"
+    config.ssh.private_key_path = ["#{private_key_path}"]
 
     if convert_to_boolean("#{forward_ports}")
         ports = [{guest: 80, host: 8080, protocol: "tcp"},{guest: 443, host: 8443, protocol: "tcp"},{guest: 53, host: 9053, protocol: "udp"},{guest: 51820, host: 51820, protocol: "udp"}]
@@ -85,7 +87,7 @@ Vagrant.configure("2") do |config|
         c.vm.provision "ansible", run: "always" do |ansible|
             ansible.compatibility_mode = "2.0"
             ansible.playbook    = "./ansible/playbook.yml"
-            ansible.extra_vars  = { ansible_python_interpreter: "/usr/bin/python3", ssh_pub_key: "#{ssh_pub_key}" }
+            ansible.extra_vars  = { ansible_user: "#{username}", ansible_python_interpreter: "/usr/bin/python3", ssh_pub_key: "#{ssh_pub_key}" }
             ansible.verbose     = "#{ansible_verbose_level}"
         end
     end

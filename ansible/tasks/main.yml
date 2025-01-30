@@ -17,6 +17,7 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
   register: compose_result
+  notify: Deploy stack
 
 - name: Setup docker-compose env
   block:
@@ -35,16 +36,19 @@
       loop: "{{ container_tags }}"
       loop_control:
         label: "{{ item.name }}"
+      notify: Deploy stack
     - name: Add PIHOLE_CORS variable
       ansible.builtin.lineinfile:
         path: "{{ compose_env_file }}"
         regexp: '^PIHOLE_CORS='
         line: "PIHOLE_CORS=pihole.{{ domain }}"
+      notify: Deploy stack
     - name: Add DOMAIN variable
       ansible.builtin.lineinfile:
         path: "{{ compose_env_file }}"
         regexp: '^DOMAIN='
         line: "DOMAIN={{ domain }}"
+      notify: Deploy stack
 
 #- name: Setup cfssl container and generate certificates
 #  ansible.builtin.include_tasks: cfssl.yml
