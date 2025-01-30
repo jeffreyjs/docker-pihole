@@ -1,8 +1,6 @@
 ---
 print_facts: false
 
-ansible_user: "{{ users[0].username }}"
-
 cfssl_services:
   - pihole
   - traefik
@@ -37,7 +35,7 @@ cfssl_config:
 
 compose_directory: /dkr
 compose_project_name: pihole
-
+compose_user: "{{ users[0].username }}"
 container_tags:
   - name: cfssl
     tag: v1.6.5
@@ -57,7 +55,7 @@ docker_network:
   wireguard_subnet: 172.21.0.0/24
   wireguard_port: 51820
 docker_users:
-  - "{{ ansible_user }}"
+  - "{{ compose_user }}"
 domain: example.net
 
 upstream_dns:

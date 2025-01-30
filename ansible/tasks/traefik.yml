@@ -10,13 +10,13 @@
         name: "{{ compose_directory_result.path }}/traefik/config"
         state: directory
         mode: "0755"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: "{{ compose_user }}"
+        group: "{{ compose_user }}"
       register: traefik_directory_result
     - name: Template traefik config files
       ansible.builtin.template:
         src: traefik.yaml.j2
         dest: "{{ traefik_directory_result.path }}/traefik.yaml"
         mode: "0644"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: "{{ compose_user }}"
+        group: "{{ compose_user }}"

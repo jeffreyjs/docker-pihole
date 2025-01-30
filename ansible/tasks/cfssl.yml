@@ -10,30 +10,30 @@
         name: "{{ compose_directory_result.path }}/etc/cfssl/config"
         state: directory
         mode: "0755"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: "{{ compose_user }}"
+        group: "{{ compose_user }}"
       register: cfssl_directory_result
     - name: Create cfssl ca.json
       ansible.builtin.copy:
         content: "{{ cfssl_ca | to_nice_json }}"
         dest: "{{ ccfssl_directory_result.path }}/ca.json"
         mode: "0644"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: "{{ compose_user }}"
+        group: "{{ compose_user }}"
     - name: Create cfssl config.json
       ansible.builtin.copy:
         content: "{{ cfssl_config | to_nice_json }}"
         dest: "{{ cfssl_directory_result.path }}/config.json"
         mode: "0644"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: "{{ compose_user }}"
+        group: "{{ compose_user }}"
     - name: Template cfssl certificate config files
       ansible.builtin.template:
         src: cfssl_service.json.j2
         dest: "{{ cfssl_directory_result.path }}/{{ service }}.json"
         mode: "0644"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: "{{ compose_user }}"
+        group: "{{ compose_user }}"
       loop: "{{ cfssl_services }}"
       loop_control:
         loop_var: service
