@@ -11,7 +11,7 @@ entryPoints:
     proxyProtocol:
       trustedIPs:
         - 127.0.0.1
-        - 172.20.0.0/24
+        - {{ docker_network.subnet }}
   dns-udp:
     address: :53/udp
 {% endif %}
@@ -26,7 +26,7 @@ entryPoints:
     address: :443
 {% if wireguard_enabled %}
   wg-udp:
-    address: :51820/udp
+    address: :{{ docker_network.wireguard_port }}/udp
 {% endif %}
 global:
   checkNewVersion: true

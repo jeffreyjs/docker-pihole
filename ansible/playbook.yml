@@ -49,8 +49,10 @@
             path: /etc/resolv.conf
             block: |
               nameserver 127.0.0.1
-              nameserver 1.1.1.1
-              search lan
+              {% for ns in upstream_dns %}
+              nameserver {{ ns }}
+              {% endfor %}
+              search {{ domain }}
     - name: Setup compose project
       ansible.builtin.include_tasks: tasks/main.yml
   vars_files:

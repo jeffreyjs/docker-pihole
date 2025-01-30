@@ -50,9 +50,15 @@ container_tags:
   - name: wireguard
     tag: 1.0.20210914
 
-domain: example.net
+docker_network:
+  subnet: 172.20.0.0/24
+  cloudflared_ip: 172.20.0.250
+  pihole_ip: 172.20.0.251
+  wireguard_subnet: 172.21.0.0/24
+  wireguard_port: 51820
 docker_users:
   - "{{ ansible_user }}"
+domain: example.net
 
 upstream_dns:
   - 1.1.1.3

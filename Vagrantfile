@@ -82,7 +82,7 @@ Vagrant.configure("2") do |config|
             fi
             printf "finished initial shell config\n"
         EOC
-        c.vm.provision "ansible" do |ansible|
+        c.vm.provision "ansible", run: "always" do |ansible|
             ansible.compatibility_mode = "2.0"
             ansible.playbook    = "./ansible/playbook.yml"
             ansible.extra_vars  = { ansible_python_interpreter: "/usr/bin/python3", ssh_pub_key: "#{ssh_pub_key}" }

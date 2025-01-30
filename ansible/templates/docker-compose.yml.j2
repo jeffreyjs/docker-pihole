@@ -21,7 +21,7 @@ networks:
       com.docker.network.driver.mtu: 1500
     ipam:
       config:
-        - subnet: "172.20.0.0/24"
+        - subnet: {{ docker_network.subnet }}
 services:
   cfssl:
     container_name: cfssl
@@ -63,7 +63,7 @@ services:
     image: cloudflare/cloudflared:${TAG_CLOUDFLARED:-latest}
     networks:
       dns:
-        ipv4_address: "172.20.0.250"
+        ipv4_address: {{ docker_network.cloudflared_ip }}
     <<: *common-settings
   pihole:
     container_name: pihole
@@ -74,8 +74,8 @@ services:
         condition: service_healthy
     dns:
       - 127.0.0.1
-      - 172.20.0.250
-      - "{{ upstream_dns[0] }}"
+      - {{ docker_network.cloudflared_ip }}
+      - {{ upstream_dns[0] }}
     environment:
       CORS_HOSTS: ${PIHOLE_CORS:-local}
       DNSMASQ_LISTENING: "all"
@@ -84,7 +84,7 @@ services:
       FTLCONF_MAXDBDAYS: "42"
       FTLCONF_MAXLOGAGE: "8.0"
       FTLCONF_PRIVACYLEVEL: "3"
-      PIHOLE_DNS_: "172.20.0.250"
+      PIHOLE_DNS_: "{{ docker_network.cloudflared_ip }}"
       WEBPASSWORD: ${WEBPASSWORD}
     healthcheck:
       test: ["CMD-SHELL", "dig @127.0.0.1 pi.hole || exit 1"]
@@ -116,7 +116,7 @@ services:
 {% endif %}
     networks:
       dns:
-        ipv4_address: 172.20.0.251
+        ipv4_address: {{ docker_network.pihole_ip }}
     <<: *common-settings
     volumes:
       - ${PWD}/pihole/volume:/etc/pihole:rw
@@ -162,9 +162,9 @@ services:
         target: 443
 {% if wireguard_enabled %}
       - mode: host
-        published: 51820
+        published: {{ docker_network.wireguard_port }}
         protocol: udp
-        target: 51820
+        target: {{ docker_network.wireguard_port }}
 {% endif %}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -184,17 +184,17 @@ services:
       PGID: "1000"
       TZ: "America/Denver"
       SERVERURL: "auto"
-      SERVERPORT: "51820"
+      SERVERPORT: "{{ docker_network.wireguard_port }}"
       ALLOWEDIPS: "0.0.0.0/0"
       PEERS: "10"
-      PEERDNS: "172.20.0.251"
-      INTERNAL_SUBNET: "172.21.0.0/24"
+      PEERDNS: "{{ docker_network.pihole_ip }}"
+      INTERNAL_SUBNET: "{{ docker_network.wireguard_subnet }}"
     image: linuxserver/wireguard:${TAG_WIREGUARD:-latest}
     labels:
       traefik.enable: true
       traefik.udp.routers.wireguard-udp.entrypoints: wg-udp
       traefik.udp.routers.wireguard-udp.service: wireguard-udp
-      traefik.udp.services.wireguard-udp.loadbalancer.server.port: 51820
+      traefik.udp.services.wireguard-udp.loadbalancer.server.port: {{ docker_network.wireguard_port }}
     <<: [*common-settings, *default-networks]
     sysctls:
       net.ipv4.conf.all.src_valid_mark: 1
