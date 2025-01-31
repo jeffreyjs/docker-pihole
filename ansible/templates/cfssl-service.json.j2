@@ -1,20 +1,9 @@
 {
-    "CN": "{{ service }}.{{ domain }}",
-    "key": {
-        "algo": "rsa",
-        "size": 4096
-    },
-    "names": [
-        {
-            "C": "US",
-            "L": "Salt Lake City",
-            "O": "Platform Engineering",
-            "OU": "DevOps",
-            "ST": "Utah"
-        }
-    ],
+    "CN": "{{ certificate_cn }}",
+    "key": {{ cfssl_ca.key | to_nice_json }},
+    "names": {{ cfssl_ca.names | to_nice_json }},0
     "hosts": [
-        "{{ service }}.{{ domain }}",
+        "{{ certificate_cn }}",
         "localhost"
     ]
 }

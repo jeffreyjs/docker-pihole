@@ -5,7 +5,7 @@ cfssl_services:
   - pihole
   - traefik
 cfssl_ca:
-  CN: "{{ domain }}"
+  CN: "{{ certificate_cn }}"
   key:
     algo: rsa
     size: 4096
