@@ -74,6 +74,7 @@ users:
     user_state: present
     servers:
       - all
-
+ 
+use_letsencrypt: false
 pihole_external_dns: false
 wireguard_enabled: true

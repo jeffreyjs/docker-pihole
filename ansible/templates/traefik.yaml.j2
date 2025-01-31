@@ -1,9 +1,36 @@
 # {{ ansible_managed }}
 ---
 api:
-  dashboard: false
+  dashboard: {{ enable_traefik_dashboard | default('false') }}
 core:
   defaultRuleSyntax: v3
+{% if use_letsencrypt %}
+certificatesResolvers:
+  resolver:
+    acme:
+      email: {% raw %}{{ env "EMAIL" }}{% endraw %}
+      storage: /etc/traefik/config/letsencrypt/acme.json
+      caServer: https://acme-v02.api.letsencrypt.org/directory
+      dnsChallenge:
+        provider: {{ challenge_provider | default('cloudflare') }}
+        delayBeforeCheck: "300"
+        resolvers:
+{% for ns in upstream_dns %}
+          - {{ ns }}:53
+{% endfor %}
+  httpchallenge:
+    acme:
+      email: {% raw %}{{ env "EMAIL" }}{% endraw %}
+      storage: /etc/traefik/config/letsencrypt/acme.json
+      httpChallenge:
+        entryPoint: web
+  tlschallenge:
+    acme:
+      caServer: https://acme-v02.api.letsencrypt.org/directory
+      email: {% raw %}{{ env "EMAIL" }}{% endraw %}
+      storage: /etc/traefik/config/letsencrypt/acme.json # chmod 600 this file on the host system
+      tlsChallenge: {}
+{% endif %}  
 entryPoints:
 {% if pihole_external_dns %}
   dns-tcp:

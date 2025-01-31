@@ -29,7 +29,7 @@
         group: "{{ compose_user }}"
     - name: Template cfssl certificate config files
       ansible.builtin.template:
-        src: cfssl_service.json.j2
+        src: cfssl-service.json.j2
         dest: "{{ cfssl_directory_result.path }}/{{ service }}.json"
         mode: "0644"
         owner: "{{ compose_user }}"
