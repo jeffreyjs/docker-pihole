@@ -5,8 +5,8 @@
     path: "{{ compose_directory }}"
     state: directory
     mode: '0755'
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ compose_user }}"
+    group: "{{ compose_user }}"
   register: compose_directory_result
 
 - name: Create docker-compose.yml
@@ -14,8 +14,8 @@
     src: docker-compose.yml.j2
     dest: "{{ compose_directory_result.path }}/docker-compose.yml"
     mode: '0644'
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ compose_user }}"
+    group: "{{ compose_user }}"
   register: compose_result
   notify: Deploy stack
 
@@ -31,8 +31,8 @@
         line: "TAG_{{ item.name | upper }}={{ item.tag }}"
         create: true
         mode: '0644'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: "{{ compose_user }}"
+        group: "{{ compose_user }}"
       loop: "{{ container_tags }}"
       loop_control:
         label: "{{ item.name }}"
