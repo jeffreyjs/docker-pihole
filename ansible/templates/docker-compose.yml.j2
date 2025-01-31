@@ -127,6 +127,9 @@ services:
     container_name: traefik
     environment:
       DOMAIN: ${DOMAIN:-local}
+{% if use_letsencrypt %}
+      EMAIL: ${EMAIL}
+{% endif %}  
     healthcheck:
       test: ["CMD", "traefik", "healthcheck"]
       interval: 1m30s
