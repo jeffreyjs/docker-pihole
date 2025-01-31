@@ -50,12 +50,12 @@
         line: "DOMAIN={{ domain }}"
       notify: Deploy stack
 
-#- name: Setup cfssl container and generate certificates
-#  ansible.builtin.include_tasks: cfssl.yml
-#  tags:
-#    - cfssl
-#    - config
-#    - certificates
+- name: Setup cfssl container and generate certificates
+  ansible.builtin.include_tasks: cfssl.yml
+  tags:
+    - cfssl
+    - config
+    - certificates
 
 - name: Setup traefik container
   ansible.builtin.include_tasks: traefik.yml

@@ -18,20 +18,21 @@ cfssl_config:
   signing:
     default:
       expiry: 8760h
-  profiles:
-    client:
-      usages:
-        - signing
-        - key encipherment
-        - client auth
-      expiry: 8760h
-    server:
-      usages:
-        - signing
-        - key encipherment
-        - client auth
-        - server auth
-      expiry: 8760h
+    profiles:
+      client:
+        usages:
+          - signing
+          - digital signature
+          - key encipherment
+          - client auth
+        expiry: 8760h
+      server:
+        usages:
+          - signing
+          - digital signature
+          - key encipherment
+          - server auth
+        expiry: 8760h
 
 compose_directory: /dkr
 compose_project_name: pihole

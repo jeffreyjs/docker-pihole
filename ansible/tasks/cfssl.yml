@@ -16,7 +16,7 @@
     - name: Create cfssl ca.json
       ansible.builtin.copy:
         content: "{{ cfssl_ca | to_nice_json }}"
-        dest: "{{ ccfssl_directory_result.path }}/ca.json"
+        dest: "{{ cfssl_directory_result.path }}/ca.json"
         mode: "0644"
         owner: "{{ compose_user }}"
         group: "{{ compose_user }}"
