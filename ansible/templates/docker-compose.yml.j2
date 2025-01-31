@@ -107,6 +107,9 @@ services:
 {% if use_letsencrypt %}
       traefik.http.routers.pihole-web.tls.certresolver: resolver
 {% endif %}
+{% if pihole_ssl %}
+      traefik.http.routers.pihole-web.tls: true
+{% endif %}
       traefik.http.services.pihole-web.loadbalancer.server.port: 80
 {% if pihole_external_dns %}
       traefik.tcp.routers.pihole-tcp.entrypoints: dns-tcp
@@ -141,7 +144,9 @@ services:
       traefik.enable: true
       traefik.http.routers.traefik.entrypoints: web-secure
       traefik.http.routers.traefik.service: api@internal
+{% if use_letsencrypt %}
       traefik.http.routers.traefik.tls.certresolver: resolver
+{% endif %}
     <<: [*common-settings, *default-networks]
     security_opt:
       - no-new-privileges:true
