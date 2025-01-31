@@ -170,6 +170,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
+      - {{ compose_directory }}/etc/cfssl:/etc/cfssl:rw
       - {{ compose_directory }}/traefik/config/traefik.yaml:/etc/traefik/traefik.yaml:ro
       - {{ compose_directory }}/traefik/config/certs-traefik.yaml:/etc/traefik/dynamic/certs-traefik.yaml:ro
 {% if wireguard_enabled %}

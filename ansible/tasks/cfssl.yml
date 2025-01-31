@@ -38,26 +38,31 @@
       loop_control:
         loop_var: service
 
-- name: Generate cfssl certificates
+- name: Check if certificate exists
+  ansible.builtin.stat:
+    path: "{{ compose_directory_result.path }}/etc/cfssl/ca.pem"
+  register: ca_certificate
+ 
+- name: Generate cfssl ca certificate
+  ansible.builtin.shell:
+    cmd: "docker compose run --rm \
+      --entrypoint sh cfssl \
+      -c \"cfssl genkey --initca /etc/cfssl/config/ca.json | cfssljson -bare ca\""
+  args:
+    chdir: "{{ compose_directory_result.path }}"
+  when: not ca_certificate.stat.exists 
   tags:
     - cfssl
+    - config
     - certificates
-  block:
-    - name: Generate ca certificate
-      ansible.builtin.shell:
-        cmd: "docker compose run --rm \
-          --entrypoint sh cfssl \
-          -c \"cfssl genkey --initca /etc/cfssl/config/ca.json | cfssljson -bare ca\""
-      args:
-        chdir: "{{ compose_directory_result.path }}"
-    - name: Generate service certificates
-      ansible.builtin.shell:
-        cmd: "docker compose run --rm --entrypoint sh cfssl \
-          -c \"cfssl gencert -ca ca.pem -ca-key ca-key.pem \
-          -config /etc/cfssl/config/config.json \
-          -profile server /etc/cfssl/config/{{ service }}.json\""
-      args:
-        chdir: "{{ compose_directory_result.path }}"
-      loop: "{{ cfssl_services }}"
-      loop_control:
-        loop_var: service
+ 
+- name: Generate service certificates
+  ansible.builtin.include_tasks: certificates.yml
+  tags:
+    - cfssl
+    - config
+    - certificates
+  loop: "{{ cfssl_services }}"
+  loop_control:
+    loop_var: service
+ 

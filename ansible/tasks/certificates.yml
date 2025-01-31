@@ -1,0 +1,17 @@
+---
+
+- name: Check if certificate exists
+  ansible.builtin.stat:
+    path: "{{ compose_directory_result.path }}/etc/cfssl/{{ service }}-server.pem"
+  register: certificate
+
+- name: Generate service certificates
+  ansible.builtin.shell:
+    cmd: "docker compose run --rm --entrypoint sh cfssl \
+      -c \"cfssl gencert -ca ca.pem -ca-key ca-key.pem \
+      -config /etc/cfssl/config/config.json \
+      -profile server /etc/cfssl/config/{{ service }}.json |
+      cfssljson -bare {{ service }}-server\""
+  args:
+    chdir: "{{ compose_directory_result.path }}"
+  when: not certificate.stat.exists
