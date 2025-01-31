@@ -101,7 +101,7 @@ services:
       traefik.http.middlewares.pihole-redirectregex.redirectregex.replacement: /
       traefik.http.middlewares.pihole-web.addprefix.prefix: /admin
       traefik.http.middlewares.adminprefix.addprefix.prefix: /admin
-      traefik.http.routers.pihole-web.entrypoints: web-secure
+      traefik.http.routers.pihole-web.entrypoints: web
       traefik.http.routers.pihole-web.middlewares: adminprefix
       traefik.http.routers.pihole-web.rule: Host(`${PIHOLE_CORS:-local}`)
 {% if use_letsencrypt %}
@@ -129,7 +129,7 @@ services:
       DOMAIN: ${DOMAIN:-local}
 {% if use_letsencrypt %}
       EMAIL: ${EMAIL}
-{% endif %}  
+{% endif %}
     healthcheck:
       test: ["CMD", "traefik", "healthcheck"]
       interval: 1m30s

@@ -30,7 +30,7 @@ certificatesResolvers:
       email: {% raw %}{{ env "EMAIL" }}{% endraw %}
       storage: /etc/traefik/config/letsencrypt/acme.json # chmod 600 this file on the host system
       tlsChallenge: {}
-{% endif %}  
+{% endif %} 
 entryPoints:
 {% if pihole_external_dns %}
   dns-tcp:
