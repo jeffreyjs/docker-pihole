@@ -53,6 +53,8 @@ entryPoints:
           scheme: https
   web-secure:
     address: :443
+    http:
+      tls: true
 {% if wireguard_enabled %}
   wg-udp:
     address: :{{ docker_network.wireguard_port }}/udp
