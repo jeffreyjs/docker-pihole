@@ -104,14 +104,14 @@ services:
       traefik.http.routers.pihole-web.service: pihole-web
       traefik.http.routers.pihole-web.middlewares: adminprefix
       traefik.http.routers.pihole-web.rule: Host(`${PIHOLE_CORS:-local}`)
-{% if use_letsencrypt %}
+{% if traefik.use_letsencrypt %}
       traefik.http.routers.pihole-web.tls.certresolver: resolver
 {% endif %}
-{% if pihole_ssl %}
+{% if pihole.ssl %}
       traefik.http.routers.pihole-web.tls: true
 {% endif %}
       traefik.http.services.pihole-web.loadbalancer.server.port: 80
-{% if pihole_external_dns %}
+{% if pihole.external_dns %}
       traefik.tcp.routers.pihole-tcp.entrypoints: dns-tcp
       traefik.tcp.routers.pihole-tcp.rule: HostSNI(`*`)
       traefik.tcp.routers.pihole-tcp.service: pihole-tcp
@@ -130,7 +130,7 @@ services:
     container_name: traefik
     environment:
       DOMAIN: ${DOMAIN:-local}
-{% if use_letsencrypt %}
+{% if traefik.use_letsencrypt %}
       EMAIL: ${EMAIL}
 {% endif %}
     healthcheck:
@@ -141,10 +141,10 @@ services:
       start_period: 30s
     image: traefik:${TAG_TRAEFIK:-latest}
     labels:
-      traefik.enable: {{ traefik_enable_dashboard | bool }}
+      traefik.enable: {{ traefik.enable_dashboard | bool }}
       traefik.http.routers.traefik.entrypoints: web-secure
       traefik.http.routers.traefik.service: api@internal
-{% if use_letsencrypt %}
+{% if traefik.use_letsencrypt %}
       traefik.http.routers.traefik.tls.certresolver: resolver
 {% endif %}
     <<: [*common-settings, *default-networks]
@@ -153,7 +153,7 @@ services:
     stdin_open: true
     tty: true
     ports:
-{% if pihole_external_dns %}
+{% if pihole.external_dns %}
       - mode: host
         published: 53
         protocol: tcp
@@ -171,11 +171,11 @@ services:
         published: 443
         protocol: tcp
         target: 443
-{% if wireguard_enabled %}
+{% if wireguard.enabled %}
       - mode: host
-        published: {{ docker_network.wireguard_port }}
+        published: {{ docker_network.wireguard.port }}
         protocol: udp
-        target: {{ docker_network.wireguard_port }}
+        target: {{ docker_network.wireguard.port }}
 {% endif %}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -183,7 +183,7 @@ services:
       - {{ compose_directory }}/etc/cfssl:/etc/cfssl:rw
       - {{ compose_directory }}/traefik/config/traefik.yaml:/etc/traefik/traefik.yaml:ro
       - {{ compose_directory }}/traefik/config/certs-traefik.yaml:/etc/traefik/dynamic/certs-traefik.yaml:ro
-{% if wireguard_enabled %}
+{% if wireguard.enabled %}
   wireguard:
     container_name: wireguard
     cap_add:
@@ -197,21 +197,24 @@ services:
       PGID: "1000"
       TZ: "America/Denver"
       SERVERURL: "auto"
-      SERVERPORT: "{{ docker_network.wireguard_port }}"
+      SERVERPORT: "{{ docker_network.wireguard.port }}"
       ALLOWEDIPS: "0.0.0.0/0"
       PEERS: "10"
       PEERDNS: "{{ docker_network.pihole.ipv4 }}"
       INTERNAL_SUBNET: "{{ docker_network.wireguard.subnet.ipv4 }}"
     image: linuxserver/wireguard:${TAG_WIREGUARD:-latest}
     labels:
-      traefik.enable: {{ wireguard_enabled | bool }}
+      traefik.enable: {{ wireguard.enabled | bool }}
       traefik.udp.routers.wireguard-udp.entrypoints: wg-udp
       traefik.udp.routers.wireguard-udp.service: wireguard-udp
-      traefik.udp.services.wireguard-udp.loadbalancer.server.port: {{ docker_network.wireguard_port }}
+      traefik.udp.services.wireguard-udp.loadbalancer.server.port: {{ docker_network.wireguard.port }}
     <<: [*common-settings, *default-networks]
     sysctls:
       net.ipv4.conf.all.src_valid_mark: 1
       net.ipv4.ip_forward: 1
+{% if docker_network.enable_ipv6 %}
+      net.ipv6.conf.all.forwarding
+{% endif %}
     volumes:
       - {{ compose_directory }}/wireguard:/config:rw
       - /lib/modules:/lib/modules

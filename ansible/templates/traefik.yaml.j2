@@ -1,10 +1,10 @@
 # {{ ansible_managed }}
 ---
 api:
-  dashboard: {{ traefik_enable_dashboard | bool }}
+  dashboard: {{ traefik.enable_dashboard | bool }}
 core:
   defaultRuleSyntax: v3
-{% if use_letsencrypt %}
+{% if traefik.use_letsencrypt %}
 certificatesResolvers:
   resolver:
     acme:
@@ -32,18 +32,23 @@ certificatesResolvers:
       tlsChallenge: {}
 {% endif %}
 entryPoints:
-{% if pihole_external_dns %}
+{% if pihole.external_dns %}
   dns-tcp:
     address: :53/tcp
     proxyProtocol:
       trustedIPs:
         - 127.0.0.1
         - {{ docker_network.subnet.ipv4 }}
+{% if docker_network.enable_ipv6 %}
+        - {{ docker_network.subnet.ipv6 }}
+{% endif %}
   dns-udp:
     address: :53/udp
 {% endif %}
+{% if traefik.enable_metrics %}
   metrics:
     address: :8082
+{% endif %}
   web:
     address: :80
     http:
@@ -55,15 +60,16 @@ entryPoints:
     address: :443
     http:
       tls: true
-{% if wireguard_enabled %}
+{% if wireguard.enabled %}
   wg-udp:
-    address: :{{ docker_network.wireguard_port }}/udp
+    address: :{{ docker_network.wireguard.port }}/udp
 {% endif %}
 global:
   checkNewVersion: true
   sendAnonymousUsage: false
 log:
   level: INFO
+{% if traefik.enable_metrics %}
 metrics:
   prometheus:
     addEntryPointsLabels: true
@@ -74,6 +80,7 @@ metrics:
       - 1.2
       - 5.0
     entryPoint: metrics
+{% endif %}
 ping: {}
 providers:
   providersThrottleDuration: 2s

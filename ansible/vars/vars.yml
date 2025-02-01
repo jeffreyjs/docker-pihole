@@ -61,7 +61,7 @@ docker_network:
   wireguard:
     subnet:
       ipv4: 172.21.0.0/24
-  wireguard_port: 51820
+    port: 51820
 docker_users:
   - "{{ compose_user }}"
 domain: example.net
@@ -92,8 +92,12 @@ users:
     servers:
       - all
 
-use_letsencrypt: false
-pihole_external_dns: false
-pihole_ssl: true
-traefik_enable_dashboard: false
-wireguard_enabled: true
+pihole:
+  external_dns: false
+  ssl: true
+traefik:
+  enable_dashboard: false
+  enable_metrics: true
+  use_letsencrypt: true
+wireguard:
+  enabled: true

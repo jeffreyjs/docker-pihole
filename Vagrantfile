@@ -9,6 +9,7 @@ VAGRANT_COMMAND = ARGV[0]
 ansible_vars = YAML.load_file("./ansible/vars/vars.yml")
 
 box = "bento/ubuntu-24.04"
+box_default_username = "vagrant"
 provider = "virtualbox"
 hostname = ansible_vars["compose_project_name"]
 python_version = "python3.12"
@@ -30,7 +31,7 @@ end
 if convert_to_boolean("#{personal_key}")
     ssh_key = ENV.fetch("VAGRANT_SSH_KEY") { "id_ed25519" }
     private_key_path = "#{home_dir}/.ssh/#{ssh_key}"
-ssh_pub_key = File.readlines("#{private_key_path}.pub").first.strip
+    ssh_pub_key = File.readlines("#{private_key_path}.pub").first.strip
 else
     private_key_path = "#{home_dir}/.vagrant.d/insecure_private_keys/vagrant.key.ed25519"
     # Get public key from file
@@ -57,10 +58,10 @@ Vagrant.configure("2") do |config|
         if VAGRANT_COMMAND == "ssh"
             username = ansible_vars["users"][0]["username"]
         else
-            username = "vagrant"
+            username = "#{box_default_username}"
         end
     else
-        username = "vagrant"
+        username = "#{box_default_username}"
     end
 
     config.ssh.username = "#{username}"
