@@ -101,3 +101,17 @@ traefik:
   use_letsencrypt: false
 wireguard:
   enabled: true
+  
+sysctl_forward: >-
+  {{
+    sysctl_forward_ipv4 +
+    (sysctl_forward_ipv6 if docker_network.enable_ipv6 else [])
+  }}
+
+sysctl_forward_ipv4:
+  - name: net.ipv4.ip_forward
+    value: "1"
+
+sysctl_forward_ipv6:
+  - name: net.ipv6.conf.all.forwarding
+    value: "1"
