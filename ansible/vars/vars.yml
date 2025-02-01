@@ -50,10 +50,17 @@ container_tags:
     tag: 1.0.20210914
 
 docker_network:
-  subnet: 172.20.0.0/24
-  cloudflared_ip: 172.20.0.250
-  pihole_ip: 172.20.0.251
-  wireguard_subnet: 172.21.0.0/24
+  enable_ipv6: false
+  subnet:
+    ipv4: 172.20.0.0/24
+    ipv6: fd00:1101:1001:10::/64
+  cloudflared:
+    ipv4: 172.20.0.250
+  pihole:
+    ipv4: 172.20.0.251
+  wireguard:
+    subnet:
+      ipv4: 172.21.0.0/24
   wireguard_port: 51820
 docker_users:
   - "{{ compose_user }}"
@@ -66,9 +73,9 @@ pihole_env:
   FTLCONF_MAXDBDAYS: "42"
   FTLCONF_MAXLOGAGE: "8.0"
   FTLCONF_PRIVACYLEVEL: "3"
-  PIHOLE_DNS_: "{{ docker_network.cloudflared_ip }}"
+  PIHOLE_DNS_: "{{ docker_network.cloudflared.ipv4 }}"
   WEBPASSWORD: ${WEBPASSWORD}
- 
+
 upstream_dns:
   - 1.1.1.3
   - 1.0.0.3

@@ -19,9 +19,15 @@ networks:
     driver: bridge
     driver_opts:
       com.docker.network.driver.mtu: 1500
+{% if docker_network.enable_ipv6 %}
+      com.docker.network.enable_ipv6: "true"
+{% endif %}
     ipam:
       config:
-        - subnet: {{ docker_network.subnet }}
+        - subnet: {{ docker_network.subnet.ipv4 }}
+{% if docker_network.enable_ipv6 %}
+        - subnet: {{ docker_network.subnet.ipv6 }}
+{% endif %}
 services:
   cfssl:
     container_name: cfssl
@@ -63,7 +69,7 @@ services:
     image: cloudflare/cloudflared:${TAG_CLOUDFLARED:-latest}
     networks:
       dns:
-        ipv4_address: {{ docker_network.cloudflared_ip }}
+        ipv4_address: {{ docker_network.cloudflared.ipv4 }}
     <<: *common-settings
   pihole:
     container_name: pihole
@@ -74,7 +80,7 @@ services:
         condition: service_healthy
     dns:
       - 127.0.0.1
-      - {{ docker_network.cloudflared_ip }}
+      - {{ docker_network.cloudflared.ipv4 }}
       - {{ upstream_dns[0] }}
     environment:
 {% for key, value in pihole_env.items() %}
@@ -116,7 +122,7 @@ services:
 {% endif %}
     networks:
       dns:
-        ipv4_address: {{ docker_network.pihole_ip }}
+        ipv4_address: {{ docker_network.pihole.ipv4 }}
     <<: *common-settings
     volumes:
       - {{ compose_directory }}/pihole/volume:/etc/pihole:rw
@@ -194,8 +200,8 @@ services:
       SERVERPORT: "{{ docker_network.wireguard_port }}"
       ALLOWEDIPS: "0.0.0.0/0"
       PEERS: "10"
-      PEERDNS: "{{ docker_network.pihole_ip }}"
-      INTERNAL_SUBNET: "{{ docker_network.wireguard_subnet }}"
+      PEERDNS: "{{ docker_network.pihole.ipv4 }}"
+      INTERNAL_SUBNET: "{{ docker_network.wireguard.subnet.ipv4 }}"
     image: linuxserver/wireguard:${TAG_WIREGUARD:-latest}
     labels:
       traefik.enable: {{ wireguard_enabled | bool }}

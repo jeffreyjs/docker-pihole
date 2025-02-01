@@ -38,7 +38,7 @@ entryPoints:
     proxyProtocol:
       trustedIPs:
         - 127.0.0.1
-        - {{ docker_network.subnet }}
+        - {{ docker_network.subnet.ipv4 }}
   dns-udp:
     address: :53/udp
 {% endif %}
