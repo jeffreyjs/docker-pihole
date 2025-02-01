@@ -42,6 +42,8 @@ entryPoints:
   dns-udp:
     address: :53/udp
 {% endif %}
+  metrics:
+    address: :8082
   web:
     address: :80
     http:
@@ -60,6 +62,16 @@ global:
   sendAnonymousUsage: false
 log:
   level: INFO
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addServicesLabels: true
+    buckets:
+      - 0.1
+      - 0.3
+      - 1.2
+      - 5.0
+    entryPoint: metrics
 ping: {}
 providers:
   providersThrottleDuration: 2s
@@ -75,5 +87,6 @@ providers:
     watch: true
   file:
     directory: /etc/traefik/dynamic
+    watch: true
 serversTransport:
   insecureSkipVerify: true
