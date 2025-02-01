@@ -1,5 +1,4 @@
 # {{ ansible_managed }}
-
 ---
 x-common: &common-settings
   logging:
@@ -142,7 +141,7 @@ services:
       start_period: 30s
     image: traefik:${TAG_TRAEFIK:-latest}
     labels:
-      traefik.enable: {{ traefik_enable_dashboard }}
+      traefik.enable: {{ traefik_enable_dashboard | bool }}
       traefik.http.routers.traefik.entrypoints: web-secure
       traefik.http.routers.traefik.service: api@internal
 {% if use_letsencrypt %}
