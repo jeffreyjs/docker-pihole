@@ -77,15 +77,9 @@ services:
       - {{ docker_network.cloudflared_ip }}
       - {{ upstream_dns[0] }}
     environment:
-      CORS_HOSTS: ${PIHOLE_CORS:-local}
-      DNSMASQ_LISTENING: "all"
-      FTL_CMD_RATE_LIMIT: "0/0"
-      FRLCONF_IGNORE_LOCALHOST: "true"
-      FTLCONF_MAXDBDAYS: "42"
-      FTLCONF_MAXLOGAGE: "8.0"
-      FTLCONF_PRIVACYLEVEL: "3"
-      PIHOLE_DNS_: "{{ docker_network.cloudflared_ip }}"
-      WEBPASSWORD: ${WEBPASSWORD}
+{% for key, value in pihole_env.items() %}
+      {{ key }}: {{ value }}
+{% endfor %}
     healthcheck:
       test: ["CMD-SHELL", "dig @127.0.0.1 pi.hole || exit 1"]
       interval: 1m30s
