@@ -98,6 +98,6 @@ pihole:
 traefik:
   enable_dashboard: false
   enable_metrics: true
-  use_letsencrypt: true
+  use_letsencrypt: false
 wireguard:
   enabled: true
