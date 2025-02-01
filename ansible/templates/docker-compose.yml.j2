@@ -102,6 +102,7 @@ services:
       traefik.http.middlewares.pihole-web.addprefix.prefix: /admin
       traefik.http.middlewares.adminprefix.addprefix.prefix: /admin
       traefik.http.routers.pihole-web.entrypoints: web
+      traefik.http.routers.pihole-web.service: pihole
       traefik.http.routers.pihole-web.middlewares: adminprefix
       traefik.http.routers.pihole-web.rule: Host(`${PIHOLE_CORS:-local}`)
 {% if use_letsencrypt %}
@@ -141,7 +142,7 @@ services:
       start_period: 30s
     image: traefik:${TAG_TRAEFIK:-latest}
     labels:
-      traefik.enable: true
+      traefik.enable: {{ traefik_enable_dashboard }}
       traefik.http.routers.traefik.entrypoints: web-secure
       traefik.http.routers.traefik.service: api@internal
 {% if use_letsencrypt %}
@@ -204,7 +205,7 @@ services:
       INTERNAL_SUBNET: "{{ docker_network.wireguard_subnet }}"
     image: linuxserver/wireguard:${TAG_WIREGUARD:-latest}
     labels:
-      traefik.enable: true
+      traefik.enable: {{ wireguard_enabled | bool }}
       traefik.udp.routers.wireguard-udp.entrypoints: wg-udp
       traefik.udp.routers.wireguard-udp.service: wireguard-udp
       traefik.udp.services.wireguard-udp.loadbalancer.server.port: {{ docker_network.wireguard_port }}

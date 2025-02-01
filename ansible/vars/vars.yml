@@ -78,4 +78,5 @@ users:
 use_letsencrypt: false
 pihole_external_dns: false
 pihole_ssl: true
+traefik_enable_dashboard: false
 wireguard_enabled: true
