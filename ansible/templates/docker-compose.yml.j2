@@ -104,18 +104,19 @@ services:
       traefik.http.routers.pihole-web.service: pihole-web
       traefik.http.routers.pihole-web.middlewares: adminprefix
       traefik.http.routers.pihole-web.rule: Host(`${PIHOLE_CORS:-local}`)
+      traefik.http.services.pihole-web.loadbalancer.server.port: 80
 {% if traefik.use_letsencrypt %}
       traefik.http.routers.pihole-web.tls.certresolver: resolver
 {% endif %}
 {% if pihole.ssl %}
-      traefik.http.routers.pihole-web.tls: true
+      traefik.tcp.routers.pihole-web-tcp.tls: true
 {% endif %}
-      traefik.http.services.pihole-web.loadbalancer.server.port: 80
+{# NOTE: If using tls, enable external_dns for SNI #}
+{% if pihole.external_dns %}
       traefik.tcp.routers.pihole-tcp.entrypoints: dns-tcp
       traefik.tcp.routers.pihole-tcp.rule: HostSNI(`*`)
       traefik.tcp.routers.pihole-tcp.service: pihole-tcp
       traefik.tcp.services.pihole-tcp.loadbalancer.server.port: 53
-{% if pihole.external_dns %}
       traefik.udp.routers.pihole-udp.entrypoints: dns-udp
       traefik.udp.routers.pihole-udp.service: pihole-udp
       traefik.udp.services.pihole-udp.loadbalancer.server.port: 53
