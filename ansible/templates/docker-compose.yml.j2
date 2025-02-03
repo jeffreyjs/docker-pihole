@@ -6,7 +6,7 @@ x-common: &common-settings
     options:
       max-size: 100m
       max-file: "3"
-  platform: linux/amd64
+  platform: linux/{{ arch }}
   pull_policy: missing
   restart: unless-stopped
 x-network: &default-networks

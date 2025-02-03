@@ -1,6 +1,8 @@
 ---
 print_facts: false
 
+arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+
 cfssl_services:
   - pihole
   - traefik
@@ -67,6 +69,7 @@ docker_users:
 domain: example.net
 
 pihole_env:
+  BLOCK_ICLOUD_PR: "true"
   CORS_HOSTS: ${PIHOLE_CORS:-local}
   DNSMASQ_LISTENING: "all"
   FTLCONF_IGNORE_LOCALHOST: "true"
