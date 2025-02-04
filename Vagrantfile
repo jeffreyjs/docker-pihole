@@ -57,8 +57,6 @@ Vagrant.configure("2") do |config|
     if provisioned?("#{hostname}", "#{provider}")
         if VAGRANT_COMMAND == "ssh"
             username = ansible_vars["users"][0]["username"]
-        else
-            username = "#{box_default_username}"
         end
     else
         username = "#{box_default_username}"
