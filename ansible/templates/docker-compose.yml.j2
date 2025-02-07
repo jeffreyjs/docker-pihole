@@ -148,6 +148,9 @@ services:
 {% if traefik.use_letsencrypt %}
       traefik.http.routers.traefik.tls.certresolver: resolver
 {% endif %}
+{% if traefik.enable_htpasswd %}
+      traefik.http.middlewares.traefik-auth.basicauth.usersfile: /etc/traefik/usersfile
+{% endif %} 
     <<: [*common-settings, *default-networks]
     security_opt:
       - no-new-privileges:true

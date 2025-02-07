@@ -68,6 +68,14 @@ docker_users:
   - "{{ compose_user }}"
 domain: example.net
 
+htpasswd_credentials:
+  - path: /etc/traefik/usersfile
+    name: traefik-control
+    password: "{{ traefik_htpasswd }}"
+    owner: root
+    group: www-data
+    mode: "0640"
+ 
 pihole_env:
   BLOCK_ICLOUD_PR: "true"
   CORS_HOSTS: ${PIHOLE_CORS:-local}
@@ -100,6 +108,7 @@ pihole:
   ssl: true
 traefik:
   enable_dashboard: false
+  enable_htpasswd: false
   enable_metrics: true
   use_letsencrypt: false
 wireguard:

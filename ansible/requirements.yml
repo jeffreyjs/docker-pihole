@@ -4,6 +4,8 @@ collections:
 roles:
   - name: geerlingguy.docker
     version: 7.4.4
+  - name: geerlingguy.htpasswd
+    version: 2.1.0 
   - src: https://github.com/ryandaniels/ansible-role-create-users
     scm: git
     version: 1.1.1
