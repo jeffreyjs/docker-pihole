@@ -50,9 +50,9 @@ repos:
   - id: shellcheck
     require_serial: true
 - repo: https://github.com/iamthefij/docker-pre-commit
-    rev: v3.0.1
-    hooks:
-      - id: docker-compose-check
+  rev: v3.0.1
+  hooks:
+  - id: docker-compose-check
 
 ci:
   autoupdate_schedule: quarterly
