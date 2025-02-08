@@ -69,11 +69,11 @@ docker_users:
 domain: example.net
 
 htpasswd_credentials:
-  - path: /etc/traefik/usersfile
+  - path: "{{ traefik_directory_result.path }}/usersfile"
     name: traefik
     password: "{{ traefik_htpasswd | default('traefik')}"
-    owner: root
-    group: www-data
+    owner: "{{ compose_user }}"
+    group: "{{ compose_user }}"
     mode: "0640"
 
 pihole_env:

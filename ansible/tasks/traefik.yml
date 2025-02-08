@@ -1,4 +1,13 @@
 ---
+- name: Create directory for traefik config
+  ansible.builtin.file:
+    name: "{{ compose_directory_result.path }}/traefik/config"
+    state: directory
+    mode: "0755"
+    owner: "{{ compose_user }}"
+    group: "{{ compose_user }}"
+  register: traefik_directory_result
+
 - name: Setup htpasswd for traefik
   ansible.builtin.include_role:
     name: geerlingguy.htpasswd
@@ -9,14 +18,6 @@
     - config
     - traefik
   block:
-    - name: Create directory for traefik config
-      ansible.builtin.file:
-        name: "{{ compose_directory_result.path }}/traefik/config"
-        state: directory
-        mode: "0755"
-        owner: "{{ compose_user }}"
-        group: "{{ compose_user }}"
-      register: traefik_directory_result
     - name: Template traefik config file
       ansible.builtin.template:
         src: traefik.yaml.j2
