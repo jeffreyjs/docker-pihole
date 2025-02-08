@@ -70,12 +70,12 @@ domain: example.net
 
 htpasswd_credentials:
   - path: /etc/traefik/usersfile
-    name: traefik-control
-    password: "{{ traefik_htpasswd }}"
+    name: traefik
+    password: "{{ traefik_htpasswd | default('traefik')}"
     owner: root
     group: www-data
     mode: "0640"
- 
+
 pihole_env:
   BLOCK_ICLOUD_PR: "true"
   CORS_HOSTS: ${PIHOLE_CORS:-local}
@@ -113,7 +113,7 @@ traefik:
   use_letsencrypt: false
 wireguard:
   enabled: true
-  
+
 sysctl_forward: >-
   {{
     sysctl_forward_ipv4 +

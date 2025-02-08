@@ -150,6 +150,7 @@ services:
 {% endif %}
 {% if traefik.enable_htpasswd %}
       traefik.http.middlewares.traefik-auth.basicauth.usersfile: /etc/traefik/usersfile
+      traefik.http.routers.traefik-auth.middlewares: dashboard
 {% endif %} 
     <<: [*common-settings, *default-networks]
     security_opt:
