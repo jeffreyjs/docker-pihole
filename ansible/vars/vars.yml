@@ -70,11 +70,13 @@ domain: example.net
 
 htpasswd_credentials:
   - path: "{{ traefik_directory_result.path }}/usersfile"
-    name: traefik
-    password: "{{ traefik_htpasswd | default('traefik')}"
     owner: "{{ compose_user }}"
     group: "{{ compose_user }}"
-    mode: "0640"
+    mode: "0644"
+    users:
+      - username: traefik
+        password: "{{ traefik_htpasswd | default('traefik') }}"
+        crypt_scheme: apr_md5_crypt
 
 pihole_env:
   BLOCK_ICLOUD_PR: "true"
@@ -107,8 +109,8 @@ pihole:
   external_dns: false
   ssl: true
 traefik:
-  enable_dashboard: false
-  enable_htpasswd: false
+  enable_dashboard: true
+  enable_htpasswd: true
   enable_metrics: true
   use_letsencrypt: false
 wireguard:

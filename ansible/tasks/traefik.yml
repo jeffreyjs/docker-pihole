@@ -10,7 +10,7 @@
 
 - name: Setup htpasswd for traefik
   ansible.builtin.include_role:
-    name: geerlingguy.htpasswd
+    name: bodsch.htpasswd
   when: traefik.enable_htpasswd
 
 - name: Setup traefik container
