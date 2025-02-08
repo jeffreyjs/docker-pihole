@@ -23,11 +23,6 @@ def convert_to_boolean(string)
     string.casecmp("true").zero?
 end
 
-# Check if the VM is already provisioned
-def provisioned?(vm_name, provider)
-    File.exist?(".vagrant/machines/#{vm_name}/#{provider}/action_provision")
-end
-
 if convert_to_boolean("#{personal_key}")
     ssh_key = ENV.fetch("VAGRANT_SSH_KEY") { "id_ed25519" }
     private_key_path = "#{home_dir}/.ssh/#{ssh_key}"
@@ -54,12 +49,10 @@ Vagrant.configure("2") do |config|
     config.ssh.insert_key = false
     config.ssh.verify_host_key = false
 
-    if provisioned?("#{hostname}", "#{provider}")
-        if VAGRANT_COMMAND == "ssh"
-            username = ansible_vars["users"][0]["username"]
-        end
-    else
-        username = "#{box_default_username}"
+    username = "#{box_default_username}"
+    
+    if VAGRANT_COMMAND == "ssh"
+        username = ansible_vars["users"][0]["username"]
     end
 
     config.ssh.username = "#{username}"
