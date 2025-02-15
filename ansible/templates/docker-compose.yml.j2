@@ -200,7 +200,7 @@ services:
     environment:
       PUID: "1000"
       PGID: "1000"
-      TZ: "America/Denver"
+      TZ: "{{ compose_timezone | default('Etc/UTC') }}"
       SERVERURL: "auto"
       SERVERPORT: "{{ docker_network.wireguard.port }}"
       ALLOWEDIPS: "0.0.0.0/0,::/0"
