@@ -7,7 +7,7 @@ x-common: &common-settings
       max-size: 100m
       max-file: "3"
   platform: linux/{{ arch }}
-  pull_policy: missing
+  pull_policy: {{ compose_pull_policy |default('missing') }}
   restart: unless-stopped
 x-network: &default-networks
   networks:
