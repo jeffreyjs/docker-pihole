@@ -13,7 +13,7 @@
   register: certificate
 
 - name: Generate service certificates
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: "{{ cfssl_generate_cert_cmd }}"
   args:
     chdir: "{{ compose_directory_result.path }}"
@@ -30,7 +30,7 @@
           point_1: "+1w"
       register: certificate_info
     - name: Regenerate service certificates
-      ansible.builtin.shell:
+      ansible.builtin.command:
         cmd: "{{ cfssl_generate_cert_cmd }}"
       args:
         chdir: "{{ compose_directory_result.path }}"

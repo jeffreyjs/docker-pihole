@@ -48,7 +48,7 @@
   register: ca_certificate
 
 - name: Generate cfssl ca certificate
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: "docker compose run --rm \
       --entrypoint sh cfssl \
       -c \"cfssl genkey --initca /etc/cfssl/config/ca.json | cfssljson -bare ca\""
