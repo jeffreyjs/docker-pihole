@@ -102,7 +102,8 @@ services:
       traefik.http.middlewares.adminprefix.addprefix.prefix: /admin
       traefik.http.routers.pihole-web.entrypoints: web-secure
       traefik.http.routers.pihole-web.service: pihole-web
-      traefik.http.routers.pihole-web.middlewares: adminprefix
+{# NOTE: Needs more testing with v6 #}
+      # traefik.http.routers.pihole-web.middlewares: adminprefix
 {# NOTE: This is not required unless a different host from the service is defined #}
       traefik.http.routers.pihole-web.rule: Host(`pihole.{{ domain }}`)
       traefik.http.services.pihole-web.loadbalancer.server.port: 80
