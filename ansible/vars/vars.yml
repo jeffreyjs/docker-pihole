@@ -45,7 +45,7 @@ container_tags:
   - name: cloudflared
     tag: 2025.2.0
   - name: pihole
-    tag: 2025.02.1
+    tag: 2025.02.3
   - name: traefik
     tag: v3.3.3
   - name: wireguard
