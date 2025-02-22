@@ -86,8 +86,9 @@ pihole_env:
   FTLCONF_MAXDBDAYS: "42"
   FTLCONF_MAXLOGAGE: "8.0"
   FTLCONF_PRIVACYLEVEL: "3"
-  FTLCONF_webserver_api_password: ${WEBPASSWORD}
   FTLCONF_dns_upstreams: "{{ docker_network.cloudflared.ipv4 }}"
+  FTLCONF_webserver_api_password: ${WEBPASSWORD}
+  FTLCONF_webserver_domain: ${PIHOLE_CORS:-local}
 
 upstream_dns:
   - 1.1.1.3
