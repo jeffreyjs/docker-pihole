@@ -169,14 +169,12 @@ services:
         protocol: udp
         target: 53
 {% endif %}
-      - mode: host
-        published: 80
-        protocol: tcp
-        target: 80
-      - mode: host
-        published: 443
-        protocol: tcp
-        target: 443
+{% for p in docker_network.traefik.ports %}
+      - mode: {{ p.mode | default('host') }}
+        published: {{ p.source }}
+        protocol: {{ p.protocol | default('tcp') }}
+        target: {{ p.source }}
+{% endfor %}
 {% if wireguard.enabled %}
       - mode: host
         published: {{ docker_network.wireguard.port }}

@@ -60,6 +60,10 @@ docker_network:
     ipv4: 172.20.0.250
   pihole:
     ipv4: 172.20.0.251
+  traefik:
+    ports:
+      - source: 80
+      - source: 443
   wireguard:
     subnet:
       ipv4: 172.21.0.0/24
